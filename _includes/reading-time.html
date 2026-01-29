@@ -1,0 +1,97 @@
+<!-- Reading Time Estimator Component -->
+<!-- Calcula el tiempo estimado de lectura basado en 250 palabras por minuto -->
+
+{% assign words = content | strip_html | number_of_words %}
+{% assign reading_time = words | divided_by: 250.0 | ceil %}
+{% if reading_time == 0 %}
+  {% assign reading_time = 1 %}
+{% endif %}
+
+<div class="reading-time" role="status" aria-label="Tiempo estimado de lectura: {{ reading_time }} minuto{% if reading_time > 1 %}s{% endif %}">
+    <svg class="reading-time-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+    </svg>
+    <span class="reading-time-text">
+        <strong>{{ reading_time }}</strong> min de lectura
+    </span>
+    <span class="reading-time-words">{{ words }} palabras</span>
+</div>
+
+<style>
+/* Reading Time Styles */
+.reading-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-top: 1rem;
+}
+
+.reading-time-icon {
+    flex-shrink: 0;
+    color: var(--primary);
+}
+
+.reading-time-text {
+    color: var(--text-primary);
+}
+
+.reading-time-text strong {
+    color: var(--primary);
+    font-size: 1rem;
+}
+
+.reading-time-words {
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    margin-left: 0.25rem;
+}
+
+/* Light Theme */
+[data-theme="light"] .reading-time {
+    background: rgba(0, 153, 204, 0.08);
+    border-color: rgba(0, 153, 204, 0.25);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .reading-time {
+        font-size: 0.8125rem;
+        padding: 0.375rem 0.75rem;
+    }
+    
+    .reading-time-words {
+        display: none;
+    }
+}
+
+/* Animation on page load */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.reading-time {
+    animation: fadeInScale 0.4s ease-out 0.2s both;
+}
+
+/* Print styles */
+@media print {
+    .reading-time {
+        border: 1px solid #000;
+        background: none;
+    }
+}
+</style>

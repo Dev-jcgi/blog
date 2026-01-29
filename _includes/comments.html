@@ -4,13 +4,16 @@
     <div class="container">
         <h3 class="comments-title">💬 Comentarios</h3>
         <p class="comments-subtitle">Inicia sesión con tu cuenta de GitHub para comentar. Los comentarios se almacenan como Issues en el repositorio del blog.</p>
-        <script src="https://utteranc.es/client.js"
-                repo="{{ site.comments.utterances.repo }}"
-                issue-term="{{ site.comments.utterances.issue-term }}"
-                theme="{{ site.comments.utterances.theme }}"
-                crossorigin="anonymous"
-                async>
-        </script>
+        
+        <div class="utterances-container">
+            <script src="https://utteranc.es/client.js"
+                    repo="{{ site.comments.utterances.repo }}"
+                    issue-term="{{ site.comments.utterances.issue-term }}"
+                    theme="{{ site.comments.utterances.theme }}"
+                    crossorigin="anonymous"
+                    async>
+            </script>
+        </div>
     </div>
 </section>
 {% endif %}
@@ -22,6 +25,10 @@
     padding: 0 2rem;
 }
 
+.comments-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
     padding-bottom: 1rem;
     border-bottom: 2px solid var(--border-color);
@@ -34,15 +41,27 @@
     line-height: 1.5;
 }
 
-#disqus_thread {
+.utterances-container {
     margin-top: 2rem;
 }
 
-/* Mejorar contraste del iframe de Disqus en modo oscuro */
-#disqus_thread iframe {
-    color-scheme: auto;
+/* Mejorar contraste del iframe de Utterances en modo oscuro */
+.utterances {
+    max-width: 100%;
+}
+
+/* Ajuste para tema claro */
+[data-theme="light"] .comments-section {
+    /* El iframe de Utterances se ajusta automáticamente */
+}
+
+@media (max-width: 768px) {
+    .comments-section {
+        padding: 0 1rem;
+    }
+    
+    .comments-title {
+        font-size: 1.5rem;
+    }
 }
 </style>
-#disqus_thread {
-    margin-top: 2rem;
-}

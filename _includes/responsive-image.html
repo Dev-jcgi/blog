@@ -1,0 +1,150 @@
+<!-- 
+  Componente de Imagen Responsiva
+  Uso: {% include responsive-image.html src="ruta/imagen.jpg" alt="Descripción" %}
+  
+  Parámetros:
+  - src: Ruta de la imagen (requerido)
+  - alt: Texto alternativo (requerido)
+  - class: Clases CSS adicionales (opcional)
+  - loading: "lazy" o "eager" (opcional, default: lazy)
+  - sizes: Atributo sizes personalizado (opcional)
+  - width: Ancho de la imagen (opcional)
+  - height: Alto de la imagen (opcional)
+-->
+
+{% assign img_src = include.src %}
+{% assign img_alt = include.alt | default: "" %}
+{% assign img_class = include.class | default: "" %}
+{% assign img_loading = include.loading | default: "lazy" %}
+{% assign img_width = include.width | default: "" %}
+{% assign img_height = include.height | default: "" %}
+
+{% comment %}
+  Generar rutas para diferentes tamaños
+  Asume que tienes imágenes en: assets/images/[nombre]-[tamaño].jpg
+  Ejemplo: hero-400.jpg, hero-800.jpg, hero-1200.jpg
+{% endcomment %}
+
+{% assign img_path = img_src | split: "/" | last %}
+{% assign img_name = img_path | split: "." | first %}
+{% assign img_ext = img_path | split: "." | last %}
+{% assign img_dir = img_src | remove: img_path %}
+
+<picture class="responsive-image {% if img_class %}{{ img_class }}{% endif %}">
+  {% comment %} WebP con diferentes tamaños {% endcomment %}
+  {% if img_ext != "svg" %}
+    <source 
+      type="image/webp"
+      srcset="
+        {{ img_dir }}{{ img_name }}-400.webp 400w,
+        {{ img_dir }}{{ img_name }}-800.webp 800w,
+        {{ img_dir }}{{ img_name }}-1200.webp 1200w
+      "
+      sizes="{{ include.sizes | default: '(max-width: 640px) 400px, (max-width: 1024px) 800px, 1200px' }}"
+    >
+    
+    {% comment %} Formato original con diferentes tamaños {% endcomment %}
+    <source 
+      type="image/{{ img_ext }}"
+      srcset="
+        {{ img_dir }}{{ img_name }}-400.{{ img_ext }} 400w,
+        {{ img_dir }}{{ img_name }}-800.{{ img_ext }} 800w,
+        {{ img_dir }}{{ img_name }}-1200.{{ img_ext }} 1200w
+      "
+      sizes="{{ include.sizes | default: '(max-width: 640px) 400px, (max-width: 1024px) 800px, 1200px' }}"
+    >
+  {% endif %}
+  
+  {% comment %} Imagen fallback {% endcomment %}
+  <img 
+    src="{{ img_src | relative_url }}"
+    alt="{{ img_alt }}"
+    loading="{{ img_loading }}"
+    decoding="async"
+    {% if img_width != "" %}width="{{ img_width }}"{% endif %}
+    {% if img_height != "" %}height="{{ img_height }}"{% endif %}
+    class="responsive-image__img"
+  >
+</picture>
+
+<style>
+.responsive-image {
+  display: block;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.responsive-image__img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: opacity 0.3s ease;
+}
+
+.responsive-image__img[loading="lazy"] {
+  opacity: 0;
+}
+
+.responsive-image__img[loading="lazy"].loaded,
+.responsive-image__img[loading="eager"] {
+  opacity: 1;
+}
+
+/* Placeholder mientras carga */
+.responsive-image::before {
+  content: '';
+  display: block;
+  padding-bottom: 56.25%; /* Aspect ratio 16:9 por defecto */
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(131, 56, 236, 0.1));
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+}
+</style>
+
+<script>
+// Lazy loading fallback y detección de carga
+document.addEventListener('DOMContentLoaded', function() {
+  const images = document.querySelectorAll('.responsive-image__img[loading="lazy"]');
+  
+  if ('IntersectionObserver' in window) {
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          
+          // Marcar como cargada cuando termine de cargar
+          img.addEventListener('load', function() {
+            this.classList.add('loaded');
+          });
+          
+          // Si ya está cargada (cache), marcar inmediatamente
+          if (img.complete) {
+            img.classList.add('loaded');
+          }
+          
+          observer.unobserve(img);
+        }
+      });
+    }, {
+      rootMargin: '50px'
+    });
+    
+    images.forEach(img => imageObserver.observe(img));
+  } else {
+    // Fallback para navegadores sin IntersectionObserver
+    images.forEach(img => {
+      img.addEventListener('load', function() {
+        this.classList.add('loaded');
+      });
+      if (img.complete) {
+        img.classList.add('loaded');
+      }
+    });
+  }
+});
+</script>

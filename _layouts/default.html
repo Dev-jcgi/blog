@@ -22,6 +22,7 @@
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     <link rel="dns-prefetch" href="https://unpkg.com">
     <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+    <link rel="stylesheet" href="{{ '/assets/css/accessibility.css' | relative_url }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -55,17 +56,19 @@
     
     <!-- PWA Service Worker -->
     <script>
-        if ('serviceWorker' in navigator && {{ site.pwa.enabled | default: true }}) {
+        {% if site.pwa.enabled == true or site.pwa.enabled == nil %}
+        if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('{{ "/sw.js" | relative_url }}')
                     .then(registration => {
-                        console.log('Service Worker registrado:', registration);
+                        // Service Worker registrado exitosamente
                     })
                     .catch(error => {
-                        console.log('Error al registrar Service Worker:', error);
+                        // Error al registrar Service Worker
                     });
             });
         }
+        {% endif %}
     </script>
 </body>
 </html>

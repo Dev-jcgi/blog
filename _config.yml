@@ -4,7 +4,7 @@ description: >-
   Explorando el Futuro de la Inteligencia Artificial. 
   Noticias, tutoriales y análisis sobre IA, Machine Learning, Deep Learning y tecnologías emergentes.
 author: AI Tech Team
-email: dev.jcgi@example.com
+email: jcgi.laboral@gmail.com
 baseurl: "/blog" # Subpath del sitio, ej: /blog
 url: "https://dev-jcgi.github.io" # URL base del sitio, ej: https://username.github.io
 
@@ -63,9 +63,9 @@ paginate: 9
 paginate_path: "/page:num/"
 
 # Social Links (opcional)
-github_username: tu-usuario
+github_username: Dev-jcgi
 twitter_username: tu-usuario
-linkedin_username: tu-usuario
+linkedin_username: dev-jcg
 
 # Categories
 category_list:
@@ -86,8 +86,24 @@ timezone: America/Mexico_City
 # Google Analytics (opcional)
 # google_analytics: G-XXXXXXXXXX
 
-# Plausible Analytics (opcional - alternativa a Google Analytics)
+# Plausible Analytics (opcional - alternativa privacy-first)
 # plausible_domain: tudominio.com
+
+# GoatCounter Analytics (opcional - open source y gratuito)
+# goatcounter: tu-codigo
+
+# Newsletter Configuration
+# Opción 1: Mailchimp
+# mailchimp_url: https://yoursite.us1.list-manage.com/subscribe/post?u=USER_ID&id=LIST_ID
+# mailchimp_user_id: tu_user_id
+# mailchimp_list_id: tu_list_id
+
+# Opción 2: ConvertKit
+# convertkit_form_id: tu_form_id
+# convertkit_uid: tu_uid
+
+# Opción 3: Custom endpoint
+# newsletter_action: https://tu-backend.com/subscribe
 
 # Comentarios con GitHub Issues (Utterances)
 # Gratis, sin publicidad, integrado con GitHub

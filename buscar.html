@@ -13,14 +13,55 @@ permalink: /buscar/
 
 <section class="search-section">
     <div class="container">
-        <div class="search-box-large">
-            <svg class="search-icon-large" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <div class="search-box-large" role="search">
+            <label for="search-input" class="sr-only">Buscar artículos del blog</label>
+            <svg class="search-icon-large" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <input type="text" id="search-input" placeholder="Buscar en todo el blog..." class="search-input-large" autofocus>
+            <input type="search" 
+                   id="search-input" 
+                   placeholder="Buscar en todo el blog..." 
+                   class="search-input-large" 
+                   autofocus
+                   aria-describedby="search-help"
+                   autocomplete="off"
+                   spellcheck="false">
+            <button id="clear-search" 
+                    class="clear-search-btn" 
+                    aria-label="Limpiar búsqueda" 
+                    style="display: none;"
+                    type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        
+        <p id="search-help" class="sr-only">Use palabras clave para buscar artículos. Soporta búsqueda con comodines usando asterisco (*).</p>
+        
+        <!-- Filtros avanzados -->
+        <div class="search-filters" role="group" aria-label="Opciones de filtrado">
+            <div class="filter-group">
+                <label for="category-filter">Categoría:</label>
+                <select id="category-filter" class="filter-select" aria-label="Filtrar por categoría">
+                    <option value="">Todas</option>
+                    {% for category in site.category_list %}
+                    <option value="{{ category }}">{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="sort-filter">Ordenar por:</label>
+                <select id="sort-filter" class="filter-select" aria-label="Ordenar resultados">
+                    <option value="relevance">Relevancia</option>
+                    <option value="date-desc">Más reciente</option>
+                    <option value="date-asc">Más antiguo</option>
+                </select>
+            </div>
         </div>
 
-        <div id="search-results" class="search-results">
+        <div id="search-results" class="search-results" role="region" aria-live="polite" aria-atomic="false">
             <div class="search-info">
                 <p class="search-placeholder">
                     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -43,7 +84,8 @@ permalink: /buscar/
             id: "{{ forloop.index }}",
             title: {{ post.title | jsonify }},
             url: {{ post.url | relative_url | jsonify }},
-            date: {{ post.date | date: "%d %b %Y" | jsonify }},
+            date: {{ post.date | date: "%Y-%m-%d" | jsonify }},
+            dateFormatted: {{ post.date | date: "%d %b %Y" | jsonify }},
             category: {{ post.category | jsonify }},
             tags: {{ post.tags | jsonify }},
             excerpt: {{ post.excerpt | strip_html | truncate: 200 | jsonify }},
@@ -52,7 +94,7 @@ permalink: /buscar/
         {% endfor %}
     ];
 
-    // Configurar Lunr
+    // Configurar Lunr con soporte multiidioma
     const idx = lunr(function() {
         this.ref('id');
         this.field('title', { boost: 10 });
@@ -69,9 +111,22 @@ permalink: /buscar/
     // Elementos del DOM
     const searchInput = document.getElementById('search-input');
     const searchResults = document.getElementById('search-results');
+    const clearBtn = document.getElementById('clear-search');
+    const categoryFilter = document.getElementById('category-filter');
+    const sortFilter = document.getElementById('sort-filter');
 
-    // Función de búsqueda
-    function performSearch(query) {
+    let currentQuery = '';
+    let currentResults = [];
+
+    // Función de búsqueda mejorada
+    function performSearch(query, category = '', sortBy = 'relevance') {
+        currentQuery = query;
+        
+        // Mostrar/ocultar botón de limpiar
+        if (clearBtn) {
+            clearBtn.style.display = query.length > 0 ? 'flex' : 'none';
+        }
+        
         if (!query || query.length < 2) {
             searchResults.innerHTML = `
                 <div class="search-info">
@@ -87,67 +142,199 @@ permalink: /buscar/
         }
 
         try {
-            const results = idx.search(query);
+            // Búsqueda con wildcards para mejor matching
+            let searchQuery = query;
+            if (!query.includes('*')) {
+                searchQuery = query.split(' ').map(term => `${term}* ${term}~1`).join(' ');
+            }
             
-            if (results.length === 0) {
+            let results = idx.search(searchQuery);
+            
+            // Filtrar por categoría si está seleccionada
+            if (category) {
+                results = results.filter(result => {
+                    const post = searchData[parseInt(result.ref) - 1];
+                    return post.category === category;
+                });
+            }
+            
+            // Obtener datos completos de los posts
+            currentResults = results.map(result => ({
+                ...searchData[parseInt(result.ref) - 1],
+                score: result.score
+            }));
+            
+            // Ordenar resultados
+            sortResults(currentResults, sortBy);
+            
+            if (currentResults.length === 0) {
                 searchResults.innerHTML = `
                     <div class="search-info">
                         <p class="no-results">
                             <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <span>No se encontraron resultados para "<strong>${query}</strong>"</span>
+                            <span>No se encontraron resultados para "<strong>${escapeHtml(query)}</strong>"${category ? ` en la categoría <strong>${category}</strong>` : ''}</span>
+                            <small>Intenta con otros términos o sin filtros</small>
                         </p>
                     </div>
                 `;
                 return;
             }
 
-            let html = `<div class="search-count">Encontrados ${results.length} resultado${results.length > 1 ? 's' : ''}</div>`;
-            html += '<div class="results-grid">';
+            displayResults(currentResults, query);
             
-            results.forEach(result => {
-                const post = searchData[parseInt(result.ref) - 1];
-                html += `
-                    <article class="result-card">
-                        <a href="${post.url}" class="result-link">
-                            <div class="result-header">
-                                <span class="result-category">${post.category}</span>
-                                <time class="result-date">${post.date}</time>
-                            </div>
-                            <h3 class="result-title">${highlightText(post.title, query)}</h3>
-                            <p class="result-excerpt">${highlightText(post.excerpt, query)}</p>
-                            ${post.tags && post.tags.length > 0 ? `
-                            <div class="result-tags">
-                                ${post.tags.slice(0, 3).map(tag => `<span class="result-tag">${tag}</span>`).join('')}
-                            </div>
-                            ` : ''}
-                        </a>
-                    </article>
-                `;
-            });
-            
-            html += '</div>';
-            searchResults.innerHTML = html;
+            // Guardar en historial
+            saveToHistory(query);
         } catch (e) {
-            console.error('Error en la búsqueda:', e);
+            // Error en la búsqueda
+            searchResults.innerHTML = `
+                <div class="search-info">
+                    <p class="no-results">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Error en la búsqueda. Intenta con otros términos.</span>
+                    </p>
+                </div>
+            `;
         }
+    }
+
+    // Ordenar resultados
+    function sortResults(results, sortBy) {
+        switch(sortBy) {
+            case 'date-desc':
+                results.sort((a, b) => new Date(b.date) - new Date(a.date));
+                break;
+            case 'date-asc':
+                results.sort((a, b) => new Date(a.date) - new Date(b.date));
+                break;
+            case 'relevance':
+            default:
+                results.sort((a, b) => b.score - a.score);
+                break;
+        }
+    }
+
+    // Mostrar resultados
+    function displayResults(results, query) {
+        let html = `
+            <div class="search-header">
+                <div class="search-count">
+                    Encontrados <strong>${results.length}</strong> resultado${results.length > 1 ? 's' : ''}
+                </div>
+            </div>
+        `;
+        
+        html += '<div class="results-grid">';
+        
+        results.forEach((post, index) => {
+            html += `
+                <article class="result-card" style="animation-delay: ${index * 0.05}s">
+                    <a href="${post.url}" class="result-link">
+                        <div class="result-header">
+                            <span class="result-category">${post.category}</span>
+                            <time class="result-date" datetime="${post.date}">${post.dateFormatted}</time>
+                        </div>
+                        <h3 class="result-title">${highlightText(post.title, query)}</h3>
+                        <p class="result-excerpt">${highlightText(post.excerpt, query)}</p>
+                        ${post.tags && post.tags.length > 0 ? `
+                        <div class="result-tags">
+                            ${post.tags.slice(0, 3).map(tag => `<span class="result-tag">${tag}</span>`).join('')}
+                        </div>
+                        ` : ''}
+                    </a>
+                </article>
+            `;
+        });
+        
+        html += '</div>';
+        searchResults.innerHTML = html;
     }
 
     // Resaltar texto coincidente
     function highlightText(text, query) {
         if (!text) return '';
-        const regex = new RegExp(`(${query})`, 'gi');
-        return text.replace(regex, '<mark>$1</mark>');
+        const terms = query.split(' ').filter(t => t.length > 1);
+        let result = text;
+        terms.forEach(term => {
+            const regex = new RegExp(`(${escapeRegex(term)})`, 'gi');
+            result = result.replace(regex, '<mark>$1</mark>');
+        });
+        return result;
     }
 
-    // Event listener
+    // Escapar HTML
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Escapar RegEx
+    function escapeRegex(text) {
+        return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    // Guardar en historial de búsqueda
+    function saveToHistory(query) {
+        if (!query) return;
+        let history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+        history = [query, ...history.filter(q => q !== query)].slice(0, 5);
+        localStorage.setItem('searchHistory', JSON.stringify(history));
+    }
+
+    // Event listeners
     let searchTimeout;
     searchInput.addEventListener('input', function() {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
-            performSearch(this.value.trim());
+            performSearch(
+                this.value.trim(),
+                categoryFilter ? categoryFilter.value : '',
+                sortFilter ? sortFilter.value : 'relevance'
+            );
         }, 300);
+    });
+
+    // Botón limpiar
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            searchInput.focus();
+            performSearch('', '', 'relevance');
+        });
+    }
+
+    // Filtros
+    if (categoryFilter) {
+        categoryFilter.addEventListener('change', () => {
+            performSearch(searchInput.value.trim(), categoryFilter.value, sortFilter.value);
+        });
+    }
+
+    if (sortFilter) {
+        sortFilter.addEventListener('change', () => {
+            if (currentResults.length > 0) {
+                sortResults(currentResults, sortFilter.value);
+                displayResults(currentResults, currentQuery);
+            }
+        });
+    }
+
+    // Atajo de teclado (Ctrl/Cmd + K)
+    document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            searchInput.focus();
+        }
+        
+        // ESC para limpiar
+        if (e.key === 'Escape' && document.activeElement === searchInput) {
+            searchInput.value = '';
+            performSearch('', '', 'relevance');
+        }
     });
 
     // Búsqueda inicial si hay parámetro en la URL
@@ -155,7 +342,7 @@ permalink: /buscar/
     const queryParam = urlParams.get('q');
     if (queryParam) {
         searchInput.value = queryParam;
-        performSearch(queryParam);
+        performSearch(queryParam, '', 'relevance');
     }
 })();
 </script>
@@ -168,7 +355,7 @@ permalink: /buscar/
 .search-box-large {
     position: relative;
     max-width: 800px;
-    margin: 0 auto 3rem;
+    margin: 0 auto 2rem;
 }
 
 .search-icon-large {
@@ -179,11 +366,12 @@ permalink: /buscar/
     width: 24px;
     height: 24px;
     color: var(--primary);
+    pointer-events: none;
 }
 
 .search-input-large {
     width: 100%;
-    padding: 1.5rem 1.5rem 1.5rem 4rem;
+    padding: 1.5rem 4rem 1.5rem 4rem;
     background: var(--bg-card);
     border: 2px solid var(--border-color);
     border-radius: 1rem;
@@ -196,6 +384,76 @@ permalink: /buscar/
     outline: none;
     border-color: var(--primary);
     box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+}
+
+.clear-search-btn {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 0.5rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.clear-search-btn:hover {
+    background: rgba(0, 0, 0, 0.2);
+    color: var(--text-primary);
+}
+
+.clear-search-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Filtros */
+.search-filters {
+    display: flex;
+    gap: 1.5rem;
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.filter-group label {
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+}
+
+.filter-select {
+    padding: 0.5rem 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.filter-select:hover {
+    border-color: var(--primary);
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.1);
 }
 
 .search-results {
@@ -224,12 +482,25 @@ permalink: /buscar/
     opacity: 0.5;
 }
 
+.no-results small {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    opacity: 0.7;
+}
+
+.search-header {
+    margin-bottom: 2rem;
+}
+
 .search-count {
     padding: 1rem;
-    margin-bottom: 2rem;
     text-align: center;
     font-size: 1.125rem;
     color: var(--text-secondary);
+}
+
+.search-count strong {
+    color: var(--primary);
 }
 
 .results-grid {
@@ -242,11 +513,25 @@ permalink: /buscar/
     border: 1px solid var(--border-color);
     border-radius: 0.75rem;
     transition: all 0.3s;
+    animation: fadeInUp 0.3s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .result-card:hover {
     border-color: var(--primary);
     transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 212, 255, 0.2);
 }
 
 .result-link {
@@ -261,6 +546,8 @@ permalink: /buscar/
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .result-category {
@@ -301,22 +588,49 @@ permalink: /buscar/
 
 .result-tag {
     padding: 0.25rem 0.5rem;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(131, 56, 236, 0.1);
+    border: 1px solid rgba(131, 56, 236, 0.3);
     border-radius: 0.25rem;
     font-size: 0.75rem;
-    color: var(--text-muted);
+    color: var(--accent);
 }
 
 mark {
     background: rgba(0, 212, 255, 0.3);
     color: var(--primary);
-    padding: 0.1rem 0.2rem;
+    padding: 0.1rem 0.3rem;
     border-radius: 0.2rem;
+    font-weight: 600;
 }
 
 @media (max-width: 768px) {
+    .search-section {
+        padding: 2rem 0 4rem;
+    }
+    
     .search-box-large {
+        margin: 0 1rem 1.5rem;
+    }
+    
+    .search-input-large {
+        font-size: 1rem;
+        padding: 1.25rem 3.5rem 1.25rem 3.5rem;
+    }
+    
+    .search-filters {
+        flex-direction: column;
+        gap: 1rem;
         margin: 0 1rem 2rem;
+    }
+    
+    .filter-group {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+    
+    .filter-select {
+        width: 100%;
     }
     
     .result-title {

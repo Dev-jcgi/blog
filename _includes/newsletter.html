@@ -1,0 +1,463 @@
+<!-- Newsletter Subscription Component -->
+<!-- Supports: Mailchimp, ConvertKit, Custom endpoint -->
+
+<section class="newsletter-section" role="region" aria-labelledby="newsletter-title">
+    <div class="container">
+        <div class="newsletter-card">
+            <div class="newsletter-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+            </div>
+            
+            <h3 id="newsletter-title" class="newsletter-title">
+                📬 Suscríbete al Newsletter
+            </h3>
+            
+            <p class="newsletter-description">
+                Recibe las últimas actualizaciones sobre Inteligencia Artificial, Machine Learning y tecnologías emergentes directamente en tu bandeja de entrada.
+            </p>
+            
+            <div class="newsletter-benefits">
+                <div class="benefit-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Artículos semanales exclusivos</span>
+                </div>
+                <div class="benefit-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Tutoriales y recursos gratis</span>
+                </div>
+                <div class="benefit-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Sin spam, cancela cuando quieras</span>
+                </div>
+            </div>
+            
+            {% if site.mailchimp_url %}
+            <!-- Mailchimp Form -->
+            <form action="{{ site.mailchimp_url }}" 
+                  method="post" 
+                  id="mc-embedded-subscribe-form" 
+                  name="mc-embedded-subscribe-form" 
+                  class="newsletter-form" 
+                  target="_blank" 
+                  novalidate>
+                
+                <div class="form-group">
+                    <label for="mce-EMAIL" class="sr-only">Dirección de correo electrónico</label>
+                    <input type="email" 
+                           value="" 
+                           name="EMAIL" 
+                           class="newsletter-input" 
+                           id="mce-EMAIL" 
+                           placeholder="tu@email.com" 
+                           required
+                           aria-required="true"
+                           aria-describedby="newsletter-privacy">
+                    
+                    <!-- Real people should not fill this in and expect good things -->
+                    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+                        <input type="text" name="b_{{ site.mailchimp_user_id }}_{{ site.mailchimp_list_id }}" tabindex="-1" value="">
+                    </div>
+                    
+                    <button type="submit" 
+                            class="newsletter-submit" 
+                            name="subscribe" 
+                            id="mc-embedded-subscribe"
+                            aria-label="Suscribirse al newsletter">
+                        <span>Suscribirse</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div id="mce-responses" class="form-responses">
+                    <div class="response" id="mce-error-response" style="display:none" role="alert"></div>
+                    <div class="response" id="mce-success-response" style="display:none" role="status"></div>
+                </div>
+            </form>
+            
+            {% elsif site.convertkit_form_id %}
+            <!-- ConvertKit Form -->
+            <form action="https://app.convertkit.com/forms/{{ site.convertkit_form_id }}/subscriptions" 
+                  method="post" 
+                  class="newsletter-form"
+                  data-sv-form="{{ site.convertkit_form_id }}" 
+                  data-uid="{{ site.convertkit_uid }}">
+                
+                <div class="form-group">
+                    <label for="ck-email" class="sr-only">Dirección de correo electrónico</label>
+                    <input type="email" 
+                           name="email_address" 
+                           id="ck-email"
+                           class="newsletter-input" 
+                           placeholder="tu@email.com" 
+                           required
+                           aria-required="true">
+                    
+                    <button type="submit" 
+                            class="newsletter-submit"
+                            aria-label="Suscribirse al newsletter">
+                        <span>Suscribirse</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+            
+            {% else %}
+            <!-- Custom/Generic Form -->
+            <form action="{{ site.newsletter_action | default: '#' }}" 
+                  method="post" 
+                  class="newsletter-form"
+                  id="newsletter-form">
+                
+                <div class="form-group">
+                    <label for="newsletter-email" class="sr-only">Dirección de correo electrónico</label>
+                    <input type="email" 
+                           name="email" 
+                           id="newsletter-email"
+                           class="newsletter-input" 
+                           placeholder="tu@email.com" 
+                           required
+                           aria-required="true"
+                           aria-describedby="newsletter-privacy">
+                    
+                    <button type="submit" 
+                            class="newsletter-submit"
+                            aria-label="Suscribirse al newsletter">
+                        <span>Suscribirse</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div id="form-message" class="form-message" role="status" aria-live="polite"></div>
+            </form>
+            {% endif %}
+            
+            <p id="newsletter-privacy" class="newsletter-privacy">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+                Respetamos tu privacidad. Sin spam.
+            </p>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Newsletter Section */
+.newsletter-section {
+    margin: 4rem 0;
+    padding: 0 1rem;
+}
+
+.newsletter-card {
+    max-width: 700px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(131, 56, 236, 0.05));
+    border: 2px solid var(--border-color);
+    border-radius: 1.5rem;
+    padding: 3rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.newsletter-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+}
+
+.newsletter-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 50%;
+    margin-bottom: 1.5rem;
+    color: var(--bg-dark);
+}
+
+.newsletter-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.newsletter-description {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Benefits List */
+.newsletter-benefits {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    text-align: left;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+}
+
+.benefit-item svg {
+    flex-shrink: 0;
+    color: var(--primary);
+}
+
+/* Form Styles */
+.newsletter-form {
+    max-width: 500px;
+    margin: 0 auto 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.newsletter-input {
+    flex: 1;
+    min-width: 250px;
+    padding: 1rem 1.5rem;
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    border-radius: 0.75rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s;
+}
+
+.newsletter-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.1);
+}
+
+.newsletter-input::placeholder {
+    color: var(--text-muted);
+}
+
+.newsletter-submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: var(--bg-dark);
+    border: none;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.newsletter-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
+}
+
+.newsletter-submit:active {
+    transform: translateY(0);
+}
+
+.newsletter-submit:focus {
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
+}
+
+.newsletter-submit svg {
+    transition: transform 0.3s;
+}
+
+.newsletter-submit:hover svg {
+    transform: translateX(4px);
+}
+
+/* Privacy Notice */
+.newsletter-privacy {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-top: 1rem;
+}
+
+.newsletter-privacy svg {
+    color: var(--primary);
+}
+
+/* Form Messages */
+.form-message,
+.form-responses .response {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+}
+
+.form-message.success,
+#mce-success-response {
+    background: rgba(0, 255, 136, 0.1);
+    color: #00ff88;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+.form-message.error,
+#mce-error-response {
+    background: rgba(255, 0, 110, 0.1);
+    color: var(--secondary);
+    border: 1px solid rgba(255, 0, 110, 0.3);
+}
+
+/* Light Theme */
+[data-theme="light"] .newsletter-card {
+    background: linear-gradient(135deg, rgba(0, 153, 204, 0.05), rgba(102, 16, 242, 0.05));
+}
+
+[data-theme="light"] .newsletter-icon {
+    color: #ffffff;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .newsletter-card {
+        padding: 2rem 1.5rem;
+    }
+    
+    .newsletter-title {
+        font-size: 1.5rem;
+    }
+    
+    .newsletter-description {
+        font-size: 1rem;
+    }
+    
+    .form-group {
+        flex-direction: column;
+    }
+    
+    .newsletter-input,
+    .newsletter-submit {
+        width: 100%;
+    }
+    
+    .newsletter-benefits {
+        gap: 0.75rem;
+    }
+    
+    .benefit-item {
+        font-size: 0.875rem;
+    }
+}
+
+/* Animation */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.newsletter-card {
+    animation: slideInUp 0.6s ease-out;
+}
+
+/* Print */
+@media print {
+    .newsletter-section {
+        display: none;
+    }
+}
+</style>
+
+<script>
+// Custom form handling (if not using Mailchimp/ConvertKit)
+(function() {
+    const form = document.getElementById('newsletter-form');
+    if (!form) return;
+    
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const email = this.querySelector('input[type="email"]').value;
+        const messageDiv = document.getElementById('form-message');
+        const submitBtn = this.querySelector('button[type="submit"]');
+        
+        // Disable button during submission
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>Enviando...</span>';
+        
+        try {
+            // Replace with your actual endpoint
+            const response = await fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: email })
+            });
+            
+            if (response.ok) {
+                messageDiv.className = 'form-message success';
+                messageDiv.textContent = '¡Suscripción exitosa! Revisa tu email para confirmar.';
+                this.reset();
+            } else {
+                throw new Error('Error en la suscripción');
+            }
+        } catch (error) {
+            messageDiv.className = 'form-message error';
+            messageDiv.textContent = 'Hubo un error. Por favor intenta de nuevo.';
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span>Suscribirse</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>';
+        }
+    });
+})();
+</script>

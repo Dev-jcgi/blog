@@ -28,7 +28,11 @@ title: Home
         </div>
 
         <div class="posts-grid">
-            {% for post in site.posts %}
+            {% if paginator %}
+                {% for post in paginator.posts %}
+            {% else %}
+                {% for post in site.posts limit:9 %}
+            {% endif %}
             <article class="post-card" data-title="{{ post.title | downcase }}" data-category="{{ post.category | downcase }}" data-tags="{{ post.tags | join: ',' | downcase }}">
                 <a href="{{ post.url | relative_url }}" class="post-card-link">
                     {% if post.image %}
@@ -64,6 +68,9 @@ title: Home
             </article>
             {% endfor %}
         </div>
+        
+        <!-- Paginación -->
+        {% include pagination.html %}
         
         {% if site.posts.size == 0 %}
         <div class="empty-state">

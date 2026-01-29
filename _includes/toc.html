@@ -120,16 +120,13 @@
 
 <style>
 .table-of-contents {
-    position: sticky;
-    top: 100px;
-    max-height: calc(100vh - 150px);
-    overflow-y: auto;
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: 1rem;
     padding: 1.5rem;
-    margin: 2rem 0;
     transition: all 0.3s;
+    position: relative;
+    z-index: 1;
 }
 
 .toc-header {
@@ -257,14 +254,6 @@
 }
 
 /* Responsive */
-@media (max-width: 1024px) {
-    .table-of-contents {
-        position: relative;
-        top: auto;
-        max-height: none;
-    }
-}
-
 @media (max-width: 768px) {
     .table-of-contents {
         margin: 1rem 0;

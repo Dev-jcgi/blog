@@ -2,12 +2,15 @@
 layout: default
 ---
 
+<!-- Breadcrumbs Navigation -->
+{% include breadcrumbs.html %}
+
 <!-- Barra de progreso de lectura -->
-<div class="reading-progress">
+<div class="reading-progress" role="progressbar" aria-label="Progreso de lectura" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
     <div class="reading-progress-bar"></div>
 </div>
 
-<article class="post-article">
+<article class="post-article" itemscope itemtype="https://schema.org/BlogPosting">
     <header class="post-header">
         <div class="container">
             <div class="post-meta-header">
@@ -17,6 +20,9 @@ layout: default
                 </time>
             </div>
             <h1 class="post-title-large">{{ page.title }}</h1>
+            
+            <!-- Reading Time Estimator -->
+            {% include reading-time.html %}
             
             {% if page.excerpt %}
             <p class="post-excerpt-large">{{ page.excerpt }}</p>
@@ -46,10 +52,12 @@ layout: default
     <div class="post-content-wrapper">
         <div class="container">
             <div class="post-layout-grid">
-                <div class="post-body-content">
-                    <!-- Tabla de contenidos -->
+                <!-- Tabla de contenidos -->
+                <aside class="post-sidebar" aria-label="Tabla de contenidos">
                     {% include toc.html %}
-                    
+                </aside>
+                
+                <div class="post-body-content">
                     {{ content }}
                 </div>
             </div>
@@ -84,6 +92,9 @@ layout: default
 
 <!-- Posts Relacionados -->
 {% include related-posts.html %}
+
+<!-- Newsletter Subscription -->
+{% include newsletter.html %}
 
 <!-- Comentarios -->
 {% if page.comments != false %}
@@ -162,8 +173,19 @@ layout: default
 }
 
 .post-layout-grid {
-    max-width: 900px;
+    max-width: 1400px;
     margin: 0 auto;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 3rem;
+    align-items: start;
+}
+
+.post-sidebar {
+    position: sticky;
+    top: 100px;
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
 }
 
 .post-body-content {
@@ -303,6 +325,27 @@ layout: default
 .nav-title {
     color: var(--text-primary);
     font-weight: 500;
+}
+
+@media (max-width: 1200px) {
+    .post-layout-grid {
+        grid-template-columns: 250px 1fr;
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .post-layout-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .post-sidebar {
+        position: relative;
+        top: auto;
+        max-height: none;
+        order: -1;
+    }
 }
 
 @media (max-width: 768px) {

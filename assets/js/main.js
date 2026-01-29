@@ -386,7 +386,9 @@ function sharePost(url, title) {
         navigator.share({
             title: title,
             url: url
-        }).catch(err => console.log('Error al compartir:', err));
+        }).catch(err => {
+            // Error al compartir, ignorar silenciosamente
+        });
     }
 }
 
@@ -557,4 +559,166 @@ function initReadingProgress() {
 
 if (document.querySelector('.post-article')) {
     initReadingProgress();
+}
+
+// ===== THEME TOGGLE (DARK/LIGHT MODE) =====
+function initThemeToggle() {
+    const themeToggle = document.getElementById('theme-toggle');
+    if (!themeToggle) return;
+    
+    // SVG Icons
+    const moonIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+    const sunIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+    
+    const slider = themeToggle.querySelector('.theme-toggle-slider');
+    
+    // Obtener tema guardado o usar preferencia del sistema
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const currentTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+    
+    // Función para actualizar icono
+    function updateIcon(theme) {
+        if (slider) {
+            slider.innerHTML = theme === 'light' ? sunIcon : moonIcon;
+        }
+    }
+    
+    // Aplicar tema inicial
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    if (currentTheme === 'light') {
+        themeToggle.classList.add('active');
+        themeToggle.setAttribute('aria-pressed', 'true');
+    }
+    updateIcon(currentTheme);
+    
+    // Toggle al hacer clic
+    themeToggle.addEventListener('click', () => {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const newTheme = isDark ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        
+        themeToggle.classList.toggle('active');
+        themeToggle.setAttribute('aria-pressed', !isDark);
+        updateIcon(newTheme);
+        
+        // Animación suave
+        document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
+    });
+    
+    // Escuchar cambios en preferencia del sistema
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('theme')) {
+            const newTheme = e.matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            themeToggle.classList.toggle('active', newTheme === 'light');
+            updateIcon(newTheme);
+        }
+    });
+}
+
+// Inicializar theme toggle inmediatamente
+initThemeToggle();
+
+// ===== COPY BUTTON EN BLOQUES DE CÓDIGO =====
+function initCodeCopyButtons() {
+    // Agregar botón copiar a cada bloque de código
+    document.querySelectorAll('pre code').forEach((codeBlock) => {
+        // Evitar duplicados si ya tiene botón
+        if (codeBlock.parentNode.querySelector('.copy-code-btn')) {
+            return;
+        }
+        
+        const pre = codeBlock.parentNode;
+        
+        // Crear botón
+        const button = document.createElement('button');
+        button.className = 'copy-code-btn';
+        button.type = 'button';
+        button.setAttribute('aria-label', 'Copiar código');
+        button.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span>Copiar</span>
+        `;
+        
+        // Asegurar que pre tenga position relative
+        pre.style.position = 'relative';
+        
+        // Agregar botón al pre
+        pre.appendChild(button);
+        
+        // Evento click
+        button.addEventListener('click', async () => {
+            const code = codeBlock.textContent;
+            
+            try {
+                await navigator.clipboard.writeText(code);
+                
+                // Feedback visual
+                button.classList.add('copied');
+                button.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span>¡Copiado!</span>
+                `;
+                button.setAttribute('aria-label', 'Código copiado');
+                
+                // Restaurar después de 2 segundos
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.innerHTML = `
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        <span>Copiar</span>
+                    `;
+                    button.setAttribute('aria-label', 'Copiar código');
+                }, 2000);
+                
+            } catch (err) {
+                // Fallback para navegadores sin clipboard API
+                const textarea = document.createElement('textarea');
+                textarea.value = code;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                
+                try {
+                    document.execCommand('copy');
+                    button.classList.add('copied');
+                    button.innerHTML = '<span>¡Copiado!</span>';
+                    
+                    setTimeout(() => {
+                        button.classList.remove('copied');
+                        button.innerHTML = `
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            <span>Copiar</span>
+                        `;
+                    }, 2000);
+                } catch (err2) {
+                    button.innerHTML = '<span>Error</span>';
+                }
+                
+                document.body.removeChild(textarea);
+            }
+        });
+    });
+}
+
+// Inicializar copy buttons
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCodeCopyButtons);
+} else {
+    initCodeCopyButtons();
 }

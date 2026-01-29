@@ -1,0 +1,637 @@
+/* ===================================================
+   WCAG 2.1 AA ACCESSIBILITY ENHANCEMENTS
+   ===================================================
+   
+   Mejoras de accesibilidad que cumplen con:
+   - WCAG 2.1 Level AA
+   - Section 508
+   - ARIA Best Practices
+   
+   ================================================= */
+
+/* ==================== 
+   1. FOCUS MANAGEMENT 
+   ==================== */
+
+/* Enhanced Focus Indicators - WCAG 2.4.7 */
+*:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
+    border-radius: 4px;
+    transition: outline-offset 0.15s ease;
+}
+
+/* Remove focus for mouse users (only keyboard) */
+*:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* High Contrast Focus for Interactive Elements */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 5px rgba(0, 212, 255, 0.2);
+}
+
+/* Focus Within for Containers */
+.card:focus-within,
+.post-card:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.3);
+}
+
+/* ==================== 
+   2. KEYBOARD NAVIGATION 
+   ==================== */
+
+/* Visible Tab Index Elements */
+[tabindex="0"]:not(a):not(button):not(input):not(textarea):not(select) {
+    cursor: pointer;
+}
+
+/* Enhanced Button Keyboard States */
+button:focus-visible,
+.btn:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
+    transform: scale(1.02);
+}
+
+/* Link Skip Navigation */
+.skip-link {
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--primary);
+    color: var(--bg-dark);
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    z-index: 10001;
+    transition: top 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 212, 255, 0.5);
+}
+
+.skip-link:focus {
+    top: 20px;
+    outline: 3px solid var(--accent);
+    outline-offset: 5px;
+}
+
+/* ==================== 
+   3. COLOR CONTRAST - WCAG 2.1.4.3
+   ==================== */
+
+/* Ensure Minimum Contrast Ratio 4.5:1 for Normal Text */
+/* 3:1 for Large Text (18pt+ or 14pt+ bold) */
+
+/* Text Contrast Adjustments */
+.text-muted {
+    color: #999999; /* Improved from #666666 for better contrast */
+}
+
+[data-theme="light"] .text-muted {
+    color: #666666; /* Adequate contrast on light background */
+}
+
+/* Link Contrast Enhancement */
+a {
+    color: var(--primary);
+    text-decoration-skip-ink: auto;
+}
+
+a:hover,
+a:focus {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+}
+
+/* Button Contrast */
+.btn-primary {
+    background: var(--primary);
+    color: #000000; /* Black text on cyan for 7:1 contrast */
+    font-weight: 600;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background: var(--primary-dark);
+    color: #000000;
+}
+
+/* Badge/Tag Contrast */
+.tag,
+.badge,
+.post-category {
+    background: rgba(0, 212, 255, 0.2);
+    color: #00ffff; /* Bright cyan for visibility */
+    border: 1px solid rgba(0, 212, 255, 0.5);
+    font-weight: 600;
+}
+
+[data-theme="light"] .tag,
+[data-theme="light"] .badge,
+[data-theme="light"] .post-category {
+    background: rgba(0, 153, 204, 0.15);
+    color: #006080; /* Dark cyan for light theme */
+    border-color: rgba(0, 153, 204, 0.3);
+}
+
+/* ==================== 
+   4. FORM ACCESSIBILITY 
+   ==================== */
+
+/* Label Association - WCAG 1.3.1, 3.3.2 */
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+/* Required Field Indicator */
+label.required::after,
+label[required]::after {
+    content: " *";
+    color: var(--secondary);
+    font-weight: bold;
+    margin-left: 0.25rem;
+}
+
+/* Input States */
+input:not([type="submit"]):not([type="button"]):not([type="reset"]),
+textarea,
+select {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+input:hover,
+textarea:hover,
+select:hover {
+    border-color: var(--primary);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--primary);
+    outline: 3px solid rgba(0, 212, 255, 0.3);
+    outline-offset: 2px;
+}
+
+/* Error States - WCAG 3.3.1 */
+input:invalid:not(:placeholder-shown),
+textarea:invalid:not(:placeholder-shown) {
+    border-color: var(--secondary);
+}
+
+input[aria-invalid="true"],
+textarea[aria-invalid="true"],
+select[aria-invalid="true"] {
+    border-color: var(--secondary);
+    border-width: 3px;
+}
+
+/* Error Message Styling */
+.error-message,
+.form-error,
+[role="alert"] {
+    color: var(--secondary);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.error-message::before {
+    content: "⚠";
+    flex-shrink: 0;
+}
+
+/* Success States */
+.success-message,
+[role="status"] {
+    color: #00ff88;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.success-message::before {
+    content: "✓";
+    flex-shrink: 0;
+}
+
+/* Placeholder Contrast */
+::placeholder {
+    color: var(--text-muted);
+    opacity: 1;
+}
+
+input:focus::placeholder,
+textarea:focus::placeholder {
+    opacity: 0.5;
+}
+
+/* ==================== 
+   5. LANDMARK REGIONS - WCAG 1.3.1 
+   ==================== */
+
+/* Ensure landmarks are properly labeled */
+header[role="banner"],
+nav[role="navigation"],
+main[role="main"],
+aside[role="complementary"],
+footer[role="contentinfo"] {
+    /* Explicit landmark styling if needed */
+}
+
+/* Visual Landmark Separation */
+main[role="main"] {
+    min-height: 50vh;
+}
+
+/* ==================== 
+   6. HEADING HIERARCHY - WCAG 1.3.1 
+   ==================== */
+
+/* Ensure proper heading visual hierarchy */
+h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; line-height: 1.2; }
+h2 { font-size: clamp(1.5rem, 4vw, 2.25rem); font-weight: 700; line-height: 1.3; }
+h3 { font-size: clamp(1.25rem, 3vw, 1.75rem); font-weight: 600; line-height: 1.4; }
+h4 { font-size: clamp(1.125rem, 2.5vw, 1.5rem); font-weight: 600; line-height: 1.4; }
+h5 { font-size: 1.125rem; font-weight: 600; line-height: 1.5; }
+h6 { font-size: 1rem; font-weight: 600; line-height: 1.5; }
+
+/* Heading Spacing */
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+/* First heading should not have top margin */
+h1:first-child,
+h2:first-child,
+h3:first-child {
+    margin-top: 0;
+}
+
+/* ==================== 
+   7. IMAGE ACCESSIBILITY - WCAG 1.1.1 
+   ==================== */
+
+/* Decorative Images */
+img[alt=""],
+img[role="presentation"],
+img[role="none"] {
+    /* Properly ignored by screen readers */
+}
+
+/* Image Loading States */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+img:not([alt]) {
+    outline: 3px solid var(--secondary);
+    outline-offset: 2px;
+}
+
+/* ==================== 
+   8. INTERACTIVE ELEMENTS 
+   ==================== */
+
+/* Minimum Target Size - WCAG 2.5.5 (Enhanced) */
+a,
+button,
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+[role="button"],
+[role="link"] {
+    min-height: 44px; /* Minimum 44x44px touch target */
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem 1rem;
+}
+
+/* Exception for inline text links */
+p a,
+li a {
+    min-height: auto;
+    min-width: auto;
+    padding: 0.125rem 0.25rem;
+}
+
+/* Button States */
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled,
+[aria-disabled="true"] {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ==================== 
+   9. ANIMATION & MOTION - WCAG 2.3.3 
+   ==================== */
+
+/* Respect Reduced Motion Preference */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ==================== 
+   10. TEXT SPACING - WCAG 1.4.12 
+   ==================== */
+
+/* Allow text spacing adjustments */
+body {
+    line-height: 1.6;
+    word-spacing: 0.16em;
+    letter-spacing: 0.01em;
+}
+
+p {
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    max-width: 75ch; /* Optimal reading width */
+}
+
+/* ==================== 
+   11. ORIENTATION - WCAG 1.3.4 
+   ==================== */
+
+/* Support both portrait and landscape */
+@media (orientation: landscape) {
+    /* Ensure content works in landscape */
+}
+
+@media (orientation: portrait) {
+    /* Ensure content works in portrait */
+}
+
+/* ==================== 
+   12. HIGH CONTRAST MODE 
+   ==================== */
+
+/* Windows High Contrast Mode */
+@media (prefers-contrast: high) {
+    * {
+        border-color: currentColor !important;
+    }
+    
+    a {
+        text-decoration: underline;
+    }
+    
+    button,
+    .btn {
+        border: 2px solid currentColor;
+    }
+}
+
+/* Forced Colors Mode */
+@media (forced-colors: active) {
+    * {
+        forced-color-adjust: auto;
+    }
+}
+
+/* ==================== 
+   13. SCREEN READER ONLY 
+   ==================== */
+
+/* Visually Hidden but Accessible to Screen Readers */
+.sr-only,
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Allow element to be focusable when navigated by keyboard */
+.sr-only-focusable:focus,
+.visually-hidden-focusable:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+}
+
+/* ==================== 
+   14. PRINT STYLES - WCAG 1.4.13 
+   ==================== */
+
+@media print {
+    /* Ensure good contrast for printing */
+    * {
+        background: white !important;
+        color: black !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+    
+    a,
+    a:visited {
+        text-decoration: underline;
+        color: #000080 !important;
+    }
+    
+    /* Show URLs after links */
+    a[href]::after {
+        content: " (" attr(href) ")";
+        font-size: 0.8em;
+    }
+    
+    /* Don't show URLs for fragments or javascript */
+    a[href^="#"]::after,
+    a[href^="javascript:"]::after {
+        content: "";
+    }
+    
+    /* Page break controls */
+    h1, h2, h3, h4, h5, h6 {
+        page-break-after: avoid;
+        page-break-inside: avoid;
+    }
+    
+    p, img, blockquote {
+        page-break-inside: avoid;
+    }
+}
+
+/* ==================== 
+   15. CUSTOM FOCUS INDICATORS 
+   ==================== */
+
+/* Search Input Focus */
+#search-input:focus,
+#search-box:focus {
+    outline: 3px solid var(--primary);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 5px rgba(0, 212, 255, 0.2);
+}
+
+/* Navigation Focus */
+.nav-link:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 5px;
+    background: rgba(0, 212, 255, 0.1);
+    border-radius: 0.5rem;
+}
+
+/* Card Focus */
+.post-card:focus-within a:focus-visible {
+    outline: none;
+}
+
+.post-card:focus-within {
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
+    transform: translateY(-4px);
+}
+
+/* ==================== 
+   16. LIVE REGIONS - WCAG 4.1.3
+   ==================== */
+
+/* Polite announcements */
+[aria-live="polite"],
+[role="status"] {
+    /* Screen readers will announce when convenient */
+}
+
+/* Assertive announcements */
+[aria-live="assertive"],
+[role="alert"] {
+    /* Screen readers will announce immediately */
+    font-weight: 700;
+}
+
+/* Atomic regions */
+[aria-atomic="true"] {
+    /* Entire region will be announced */
+}
+
+/* ==================== 
+   17. TABLE ACCESSIBILITY 
+   ==================== */
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 2rem 0;
+}
+
+th {
+    text-align: left;
+    font-weight: 700;
+    background: var(--bg-card);
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+}
+
+td {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+}
+
+/* Zebra striping for better readability */
+tbody tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+[data-theme="light"] tbody tr:nth-child(even) {
+    background: rgba(0, 0, 0, 0.02);
+}
+
+/* ==================== 
+   18. TOOLTIP ACCESSIBILITY 
+   ==================== */
+
+[role="tooltip"] {
+    position: absolute;
+    z-index: 10000;
+    background: var(--bg-darker);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+    max-width: 300px;
+}
+
+/* ==================== 
+   19. LANGUAGE ATTRIBUTE 
+   ==================== */
+
+/* Ensure lang attribute is set on HTML element */
+[lang]:not(:lang(es)) {
+    /* Different language content */
+    font-style: italic;
+}
+
+/* ==================== 
+   20. CONSISTENT IDENTIFICATION - WCAG 3.2.4 
+   ==================== */
+
+/* Ensure icons have consistent meanings */
+.icon-external::after,
+a[target="_blank"]::after {
+    content: " ↗";
+    font-size: 0.8em;
+    margin-left: 0.25em;
+}
+
+/* Download links */
+a[download]::before {
+    content: "⬇ ";
+    margin-right: 0.25em;
+}

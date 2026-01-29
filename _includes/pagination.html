@@ -1,0 +1,233 @@
+<!-- Componente de Paginación -->
+{% if paginator.total_pages > 1 %}
+<nav class="pagination" role="navigation" aria-label="Paginación de artículos">
+    <div class="pagination-container">
+        
+        <!-- Botón Anterior -->
+        {% if paginator.previous_page %}
+        <a href="{{ paginator.previous_page_path | relative_url }}" 
+           class="pagination-btn pagination-prev"
+           rel="prev"
+           aria-label="Página anterior">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+            </svg>
+            <span>Anterior</span>
+        </a>
+        {% else %}
+        <span class="pagination-btn pagination-prev disabled" aria-disabled="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+            </svg>
+            <span>Anterior</span>
+        </span>
+        {% endif %}
+        
+        <!-- Números de Página -->
+        <div class="pagination-numbers">
+            {% assign start_page = paginator.page | minus: 2 %}
+            {% if start_page < 1 %}
+                {% assign start_page = 1 %}
+            {% endif %}
+            
+            {% assign end_page = paginator.page | plus: 2 %}
+            {% if end_page > paginator.total_pages %}
+                {% assign end_page = paginator.total_pages %}
+            {% endif %}
+            
+            <!-- Primera página si no está visible -->
+            {% if start_page > 1 %}
+                <a href="{{ paginator.first_page_path | relative_url }}" 
+                   class="pagination-number"
+                   aria-label="Ir a la primera página">1</a>
+                {% if start_page > 2 %}
+                    <span class="pagination-ellipsis">...</span>
+                {% endif %}
+            {% endif %}
+            
+            <!-- Páginas visibles -->
+            {% for page_num in (start_page..end_page) %}
+                {% if page_num == paginator.page %}
+                    <span class="pagination-number active" aria-current="page">{{ page_num }}</span>
+                {% else %}
+                    {% if page_num == 1 %}
+                        <a href="{{ paginator.first_page_path | relative_url }}" 
+                           class="pagination-number"
+                           aria-label="Ir a la página {{ page_num }}">{{ page_num }}</a>
+                    {% else %}
+                        <a href="{{ site.paginate_path | relative_url | replace: ':num', page_num }}" 
+                           class="pagination-number"
+                           aria-label="Ir a la página {{ page_num }}">{{ page_num }}</a>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            
+            <!-- Última página si no está visible -->
+            {% if end_page < paginator.total_pages %}
+                {% if end_page < paginator.total_pages | minus: 1 %}
+                    <span class="pagination-ellipsis">...</span>
+                {% endif %}
+                <a href="{{ site.paginate_path | relative_url | replace: ':num', paginator.total_pages }}" 
+                   class="pagination-number"
+                   aria-label="Ir a la última página">{{ paginator.total_pages }}</a>
+            {% endif %}
+        </div>
+        
+        <!-- Botón Siguiente -->
+        {% if paginator.next_page %}
+        <a href="{{ paginator.next_page_path | relative_url }}" 
+           class="pagination-btn pagination-next"
+           rel="next"
+           aria-label="Página siguiente">
+            <span>Siguiente</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+            </svg>
+        </a>
+        {% else %}
+        <span class="pagination-btn pagination-next disabled" aria-disabled="true">
+            <span>Siguiente</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+            </svg>
+        </span>
+        {% endif %}
+        
+    </div>
+    
+    <!-- Info de página -->
+    <div class="pagination-info">
+        <p>Página {{ paginator.page }} de {{ paginator.total_pages }} 
+           <span class="pagination-separator">•</span> 
+           {{ paginator.total_posts }} artículos en total</p>
+    </div>
+</nav>
+{% endif %}
+
+<style>
+.pagination {
+    margin: 4rem 0 2rem;
+    padding: 2rem 0;
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.pagination-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.pagination-btn:hover:not(.disabled) {
+    border-color: var(--primary);
+    background: rgba(0, 212, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.pagination-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination-btn svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.pagination-numbers {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.pagination-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 0.75rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.pagination-number:hover:not(.active) {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: rgba(0, 212, 255, 0.05);
+}
+
+.pagination-number.active {
+    background: var(--gradient);
+    border-color: transparent;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+}
+
+.pagination-ellipsis {
+    color: var(--text-muted);
+    padding: 0 0.5rem;
+    font-weight: 600;
+}
+
+.pagination-info {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.pagination-info p {
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+}
+
+.pagination-separator {
+    margin: 0 0.5rem;
+    color: var(--border-color);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .pagination-btn span {
+        display: none;
+    }
+    
+    .pagination-btn {
+        padding: 0.75rem;
+    }
+    
+    .pagination-number {
+        min-width: 36px;
+        height: 36px;
+        padding: 0 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .pagination-info p {
+        font-size: 0.875rem;
+    }
+}
+</style>

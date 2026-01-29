@@ -1,24 +1,95 @@
-<!-- Google Analytics 4 -->
+<!-- Analytics Configuration -->
+<!-- Supports: Google Analytics 4, Plausible, GoatCounter -->
+
 {% if site.google_analytics %}
+<!-- Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.google_analytics }}"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
+  
   gtag('config', '{{ site.google_analytics }}', {
     'anonymize_ip': true,
-    'cookie_flags': 'SameSite=None;Secure'
+    'cookie_flags': 'SameSite=None;Secure',
+    'page_path': window.location.pathname
+  });
+  
+  // Custom Events for Enhanced Tracking
+  (function() {
+    // Track outbound links
+    document.addEventListener('click', function(e) {
+      if (e.target.tagName === 'A' && e.target.hostname !== window.location.hostname) {
+        gtag('event', 'click', {
+          'event_category': 'outbound',
+          'event_label': e.target.href,
+          'transport_type': 'beacon'
+        });
+      }
+    });
+    
+    // Track search usage
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        if (this.value.length > 3) {
+          gtag('event', 'search', {
+            'search_term': this.value
+          });
+        }
+      });
+    }
+    
+    // Track reading progress
+    let milestones = [25, 50, 75, 100];
+    let milestonesReached = {};
+    
+    window.addEventListener('scroll', function() {
+      const scrollPercent = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+      
+      milestones.forEach(function(milestone) {
+        if (scrollPercent >= milestone && !milestonesReached[milestone]) {
+          milestonesReached[milestone] = true;
+          gtag('event', 'scroll', {
+            'event_category': 'engagement',
+            'event_label': milestone + '% scrolled',
+            'value': milestone
+          });
+        }
+      });
+    });
+  })();
+</script>
+{% endif %}
+
+{% if site.plausible_domain %}
+<!-- Plausible Analytics (Privacy-first alternative) -->
+<script defer data-domain="{{ site.plausible_domain }}" src="https://plausible.io/js/script.js"></script>
+<script>
+  // Plausible custom events
+  window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) };
+  
+  // Track outbound links
+  document.addEventListener('click', function(e) {
+    if (e.target.tagName === 'A' && e.target.hostname !== window.location.hostname) {
+      plausible('Outbound Link: Click', {props: {url: e.target.href}});
+    }
   });
 </script>
 {% endif %}
 
-<!-- Plausible Analytics (Alternativa privacy-focused) -->
-{% if site.plausible_domain %}
-<script defer data-domain="{{ site.plausible_domain }}" src="https://plausible.io/js/script.js"></script>
-{% endif %}
-
-<!-- GoatCounter (Alternativa Open Source y Gratuita) -->
 {% if site.goatcounter %}
+<!-- GoatCounter (Open Source & Free) -->
 <script data-goatcounter="https://{{ site.goatcounter }}.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 {% endif %}
+
+<!-- Privacy Notice -->
+{% if site.google_analytics or site.plausible_domain or site.goatcounter %}
+<noscript>
+  <p style="text-align: center; font-size: 0.875rem; color: #666; padding: 1rem;">
+    Este sitio utiliza analytics para mejorar la experiencia del usuario.
+  </p>
+</noscript>
+{% endif %}
+

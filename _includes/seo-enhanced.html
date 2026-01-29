@@ -38,90 +38,159 @@
 <!-- Canonical URL -->
 <link rel="canonical" href="{{ page.url | absolute_url }}">
 
-<!-- JSON-LD Structured Data -->
+<!-- Enhanced JSON-LD Structured Data with @graph -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "{% if page.layout == 'post' %}BlogPosting{% else %}WebSite{% endif %}",
-  {% if page.layout == 'post' %}
-  "headline": "{{ page.title }}",
-  "image": {
-    "@type": "ImageObject",
-    "url": "{% if page.image %}{{ page.image }}{% else %}{{ '/assets/images/og-default.jpg' | absolute_url }}{% endif %}",
-    "width": 1200,
-    "height": 630
-  },
-  "datePublished": "{{ page.date | date_to_xmlschema }}",
-  "dateModified": "{% if page.last_modified_at %}{{ page.last_modified_at | date_to_xmlschema }}{% else %}{{ page.date | date_to_xmlschema }}{% endif %}",
-  "author": {
-    "@type": "Person",
-    "name": "{{ site.author }}",
-    "url": "{{ site.url }}"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "{{ site.title }}",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "{{ '/assets/images/logo.png' | absolute_url }}"
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "{{ site.url }}{{ site.baseurl }}/#website",
+      "url": "{{ site.url }}{{ site.baseurl }}/",
+      "name": "{{ site.title }}",
+      "description": "{{ site.description | strip_html | strip_newlines }}",
+      "publisher": {
+        "@id": "{{ site.url }}{{ site.baseurl }}/#organization"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "{{ site.url }}{{ site.baseurl }}/buscar/?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      },
+      "inLanguage": "{{ site.lang | default: 'es' }}"
+    },
+    {
+      "@type": "Organization",
+      "@id": "{{ site.url }}{{ site.baseurl }}/#organization",
+      "name": "{{ site.title }}",
+      "url": "{{ site.url }}{{ site.baseurl }}/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "{{ '/assets/images/logo.png' | absolute_url }}",
+        "width": 512,
+        "height": 512
+      },
+      "sameAs": [
+        {% if site.github_username %}"https://github.com/{{ site.github_username }}"{% if site.twitter_username or site.linkedin_username %},{% endif %}{% endif %}
+        {% if site.twitter_username %}"https://twitter.com/{{ site.twitter_username }}"{% if site.linkedin_username %},{% endif %}{% endif %}
+        {% if site.linkedin_username %}"https://linkedin.com/in/{{ site.linkedin_username }}"{% endif %}
+      ]
     }
-  },
-  "description": "{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "{{ page.url | absolute_url }}"
-  },
-  {% if page.category %}
-  "articleSection": "{{ page.category }}",
-  {% endif %}
-  {% if page.tags %}
-  "keywords": "{{ page.tags | join: ', ' }}",
-  {% endif %}
-  "url": "{{ page.url | absolute_url }}"
-  {% else %}
-  "name": "{{ site.title }}",
-  "description": "{{ site.description }}",
-  "url": "{{ site.url }}{{ site.baseurl }}",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "{{ site.url }}{{ site.baseurl }}/buscar/?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
-  {% endif %}
-}
-</script>
-
-{% if page.layout == 'post' %}
-<!-- BreadcrumbList Structured Data -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "Inicio",
-      "item": "{{ site.url }}{{ site.baseurl }}"
-    },
-    {% if page.category %}
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "{{ page.category }}",
-      "item": "{{ site.url }}{{ site.baseurl }}/categorias/#{{ page.category | slugify }}"
-    },
-    {% endif %}
-    {
-      "@type": "ListItem",
-      "position": {% if page.category %}3{% else %}2{% endif %},
+    {% if page.layout == 'post' %}
+    ,{
+      "@type": "BlogPosting",
+      "@id": "{{ page.url | absolute_url }}#article",
+      "isPartOf": {
+        "@id": "{{ site.url }}{{ site.baseurl }}/#website"
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ page.url | absolute_url }}"
+      },
+      "headline": "{{ page.title }}",
       "name": "{{ page.title }}",
-      "item": "{{ page.url | absolute_url }}"
+      "description": "{{ page.excerpt | default: page.content | strip_html | strip_newlines | truncate: 160 }}",
+      "datePublished": "{{ page.date | date_to_xmlschema }}",
+      "dateModified": "{{ page.last_modified_at | default: page.date | date_to_xmlschema }}",
+      "author": {
+        "@type": "Person",
+        "@id": "{{ site.url }}{{ site.baseurl }}/#/schema/person/{{ page.author | default: site.author | slugify }}",
+        "name": "{{ page.author | default: site.author | default: 'AI Tech Team' }}",
+        "url": "{{ site.url }}{{ site.baseurl }}/about/"
+      },
+      "publisher": {
+        "@id": "{{ site.url }}{{ site.baseurl }}/#organization"
+      },
+      {% if page.image %}
+      "image": {
+        "@type": "ImageObject",
+        "@id": "{{ page.url | absolute_url }}#primaryimage",
+        "url": "{{ page.image | absolute_url }}",
+        "width": 1200,
+        "height": 630,
+        "caption": "{{ page.title }}"
+      },
+      {% endif %}
+      "url": "{{ page.url | absolute_url }}",
+      "inLanguage": "{{ site.lang | default: 'es' }}",
+      {% if page.category %}
+      "articleSection": "{{ page.category }}",
+      "about": {
+        "@type": "Thing",
+        "name": "{{ page.category }}"
+      },
+      {% endif %}
+      {% if page.tags %}
+      "keywords": "{{ page.tags | join: ', ' }}",
+      {% endif %}
+      "wordCount": {{ page.content | number_of_words }},
+      "commentCount": 0,
+      "potentialAction": [
+        {
+          "@type": "ReadAction",
+          "target": ["{{ page.url | absolute_url }}"]
+        },
+        {
+          "@type": "ShareAction",
+          "target": ["{{ page.url | absolute_url }}"]
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "{{ page.url | absolute_url }}#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "{{ site.url }}{{ site.baseurl }}/"
+        },
+        {% if page.category %}
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "{{ page.category }}",
+          "item": "{{ site.url }}{{ site.baseurl }}/categorias/#{{ page.category | slugify }}"
+        },
+        {% endif %}
+        {
+          "@type": "ListItem",
+          "position": {% if page.category %}3{% else %}2{% endif %},
+          "name": "{{ page.title }}",
+          "item": "{{ page.url | absolute_url }}"
+        }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "{{ page.url | absolute_url }}#webpage",
+      "url": "{{ page.url | absolute_url }}",
+      "name": "{{ page.title }}",
+      "isPartOf": {
+        "@id": "{{ site.url }}{{ site.baseurl }}/#website"
+      },
+      "datePublished": "{{ page.date | date_to_xmlschema }}",
+      "dateModified": "{{ page.last_modified_at | default: page.date | date_to_xmlschema }}",
+      "description": "{{ page.excerpt | default: page.content | strip_html | strip_newlines | truncate: 160 }}",
+      "breadcrumb": {
+        "@id": "{{ page.url | absolute_url }}#breadcrumb"
+      },
+      "inLanguage": "{{ site.lang | default: 'es' }}",
+      "potentialAction": [
+        {
+          "@type": "ReadAction",
+          "target": ["{{ page.url | absolute_url }}"]
+        }
+      ]
     }
+    {% endif %}
   ]
 }
 </script>
-{% endif %}
 
 <!-- Additional SEO Meta Tags -->
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">

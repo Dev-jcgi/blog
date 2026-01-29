@@ -1,0 +1,160 @@
+<!-- 
+════════════════════════════════════════════════════════════════
+  GUÍA DE OPTIMIZACIÓN DE IMÁGENES
+════════════════════════════════════════════════════════════════
+
+Este blog incluye soporte para imágenes responsivas y optimizadas.
+Para obtener el máximo rendimiento, sigue estas instrucciones:
+
+════════════════════════════════════════════════════════════════
+  1. ESTRUCTURA DE ARCHIVOS
+════════════════════════════════════════════════════════════════
+
+Organiza tus imágenes en: assets/images/
+
+Para cada imagen, crea 3 tamaños + WebP:
+  
+  assets/images/
+  ├── mi-imagen-400.jpg       (ancho: 400px)
+  ├── mi-imagen-800.jpg       (ancho: 800px)
+  ├── mi-imagen-1200.jpg      (ancho: 1200px)
+  ├── mi-imagen-400.webp      (formato WebP)
+  ├── mi-imagen-800.webp      (formato WebP)
+  └── mi-imagen-1200.webp     (formato WebP)
+
+════════════════════════════════════════════════════════════════
+  2. USO EN POSTS
+════════════════════════════════════════════════════════════════
+
+Opción A - Componente Responsivo (Recomendado):
+  
+  {% include responsive-image.html 
+     src="/assets/images/mi-imagen-800.jpg"
+     alt="Descripción de la imagen"
+     class="post-image"
+     loading="lazy"
+  %}
+
+Opción B - HTML Tradicional:
+  
+  <img src="/assets/images/mi-imagen-800.jpg" 
+       alt="Descripción" 
+       loading="lazy" 
+       decoding="async">
+
+════════════════════════════════════════════════════════════════
+  3. HERRAMIENTAS DE OPTIMIZACIÓN
+════════════════════════════════════════════════════════════════
+
+Para generar las versiones optimizadas:
+
+▪ SHARP (Node.js) - Recomendado
+  
+  npm install -g sharp-cli
+  
+  # Generar tamaños
+  sharp -i original.jpg -o mi-imagen-400.jpg resize 400
+  sharp -i original.jpg -o mi-imagen-800.jpg resize 800
+  sharp -i original.jpg -o mi-imagen-1200.jpg resize 1200
+  
+  # Convertir a WebP
+  sharp -i mi-imagen-400.jpg -o mi-imagen-400.webp
+  sharp -i mi-imagen-800.jpg -o mi-imagen-800.webp
+  sharp -i mi-imagen-1200.jpg -o mi-imagen-1200.webp
+
+▪ IMAGEMAGICK (Multiplataforma)
+  
+  # Redimensionar
+  magick original.jpg -resize 400x mi-imagen-400.jpg
+  magick original.jpg -resize 800x mi-imagen-800.jpg
+  magick original.jpg -resize 1200x mi-imagen-1200.jpg
+  
+  # Convertir a WebP
+  magick mi-imagen-400.jpg mi-imagen-400.webp
+
+▪ ONLINE (Sin instalación)
+  
+  - Squoosh: https://squoosh.app/
+  - TinyPNG: https://tinypng.com/
+  - Cloudinary: https://cloudinary.com/
+
+════════════════════════════════════════════════════════════════
+  4. SCRIPT DE AUTOMATIZACIÓN (PowerShell)
+════════════════════════════════════════════════════════════════
+
+Crea optimize-images.ps1:
+
+  # Requiere ImageMagick instalado
+  $sourcePath = ".\assets\images\originals"
+  $outputPath = ".\assets\images"
+  $sizes = @(400, 800, 1200)
+  
+  Get-ChildItem $sourcePath -Filter *.jpg | ForEach-Object {
+      $basename = $_.BaseName
+      
+      foreach ($size in $sizes) {
+          # JPG
+          magick $_.FullName -resize "${size}x" "$outputPath\$basename-$size.jpg"
+          
+          # WebP
+          magick "$outputPath\$basename-$size.jpg" "$outputPath\$basename-$size.webp"
+      }
+      
+      Write-Host "✅ Optimizado: $basename"
+  }
+
+Ejecutar: .\optimize-images.ps1
+
+════════════════════════════════════════════════════════════════
+  5. CONFIGURACIÓN EN POSTS
+════════════════════════════════════════════════════════════════
+
+En el Front Matter de tus posts:
+
+  ---
+  title: "Mi Artículo"
+  image: "/assets/images/mi-imagen-800.jpg"
+  image_webp: "/assets/images/mi-imagen-800.webp"
+  image_alt: "Descripción de la imagen"
+  ---
+
+════════════════════════════════════════════════════════════════
+  6. BENEFICIOS
+════════════════════════════════════════════════════════════════
+
+✅ Carga hasta 70% más rápida con WebP
+✅ Menos datos móviles consumidos
+✅ Mejor SEO (Core Web Vitals)
+✅ Lazy loading automático
+✅ Placeholder mientras carga
+✅ Responsive: tamaño correcto por dispositivo
+
+════════════════════════════════════════════════════════════════
+  7. FALLBACK AUTOMÁTICO
+════════════════════════════════════════════════════════════════
+
+El componente responsive-image.html incluye:
+
+  1. Intenta WebP (mejor compresión)
+  2. Si falla → Usa JPG/PNG original
+  3. Carga lazy automática
+  4. Placeholder visual
+  5. IntersectionObserver para performance
+
+════════════════════════════════════════════════════════════════
+  8. TESTING
+════════════════════════════════════════════════════════════════
+
+Verifica optimización:
+
+  - PageSpeed Insights: https://pagespeed.web.dev/
+  - GTmetrix: https://gtmetrix.com/
+  - WebPageTest: https://www.webpagetest.org/
+
+Busca estos checks:
+  ✅ Serve images in next-gen formats (WebP)
+  ✅ Properly size images
+  ✅ Defer offscreen images (lazy loading)
+
+════════════════════════════════════════════════════════════════
+-->
