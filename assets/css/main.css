@@ -1170,3 +1170,520 @@ pre:hover .copy-code-btn {
     border-color: rgba(25, 135, 84, 0.4);
     color: #198754;
 }
+
+/* ================================================
+   BOOKMARKS SYSTEM
+================================================ */
+
+/* Botón de bookmark en posts */
+.bookmark-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 0.5rem;
+    color: #00d4ff;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.bookmark-btn:hover {
+    background: rgba(0, 212, 255, 0.2);
+    border-color: #00d4ff;
+    transform: translateY(-2px);
+}
+
+.bookmark-btn:active {
+    transform: translateY(0);
+}
+
+.bookmark-btn svg {
+    flex-shrink: 0;
+}
+
+/* Notificación de bookmark */
+.bookmark-notification {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: rgba(0, 212, 255, 0.95);
+    color: #0a0e27;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 10000;
+}
+
+.bookmark-notification.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Página de bookmarks */
+.bookmarks-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.bookmarks-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+}
+
+.bookmarks-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.bookmarks-actions button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 0.5rem;
+    color: #00d4ff;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.bookmarks-actions button:hover {
+    background: rgba(0, 212, 255, 0.2);
+    border-color: #00d4ff;
+}
+
+.bookmarks-list {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.bookmark-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.bookmark-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(0, 212, 255, 0.3);
+    transform: translateX(4px);
+}
+
+.bookmark-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.bookmark-item-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #00d4ff;
+    text-decoration: none;
+    margin: 0;
+}
+
+.bookmark-item-title:hover {
+    text-decoration: underline;
+}
+
+.bookmark-remove-btn {
+    background: rgba(255, 59, 48, 0.1);
+    border: 1px solid rgba(255, 59, 48, 0.3);
+    color: #ff3b30;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.bookmark-remove-btn:hover {
+    background: rgba(255, 59, 48, 0.2);
+    border-color: #ff3b30;
+}
+
+.bookmark-item-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 0.75rem;
+}
+
+.bookmark-item-excerpt {
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.bookmarks-empty {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.bookmarks-empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+}
+
+.bookmarks-empty-title {
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 0.5rem;
+}
+
+.bookmarks-empty-text {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Light theme */
+[data-theme="light"] .bookmark-btn {
+    background: rgba(0, 122, 255, 0.1);
+    border-color: rgba(0, 122, 255, 0.3);
+    color: #007aff;
+}
+
+[data-theme="light"] .bookmark-btn:hover {
+    background: rgba(0, 122, 255, 0.2);
+    border-color: #007aff;
+}
+
+[data-theme="light"] .bookmark-notification {
+    background: rgba(0, 122, 255, 0.95);
+    color: #fff;
+}
+
+[data-theme="light"] .bookmark-item {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .bookmark-item:hover {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 122, 255, 0.3);
+}
+
+[data-theme="light"] .bookmark-item-title {
+    color: #007aff;
+}
+
+[data-theme="light"] .bookmark-item-meta,
+[data-theme="light"] .bookmark-item-excerpt {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .bookmarks-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .bookmarks-actions {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+    
+    .bookmark-btn span {
+        display: none;
+    }
+    
+    .bookmark-notification {
+        left: 1rem;
+        right: 1rem;
+        bottom: 1rem;
+    }
+}
+
+/* ================================================
+   READER MODE
+================================================ */
+
+/* Botón toggle */
+.reader-mode-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 0.5rem;
+    color: #00d4ff;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 1rem;
+}
+
+.reader-mode-toggle:hover {
+    background: rgba(0, 212, 255, 0.2);
+    border-color: #00d4ff;
+    transform: translateY(-2px);
+}
+
+.reader-mode-toggle.active {
+    background: rgba(0, 212, 255, 0.3);
+    border-color: #00d4ff;
+}
+
+.reader-mode-toggle svg {
+    flex-shrink: 0;
+}
+
+/* Notificación */
+.reader-mode-notification {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: rgba(0, 212, 255, 0.95);
+    color: #0a0e27;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 10000;
+}
+
+.reader-mode-notification.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* ================================================
+   ESTILOS READER MODE ACTIVO
+================================================ */
+
+body.reader-mode {
+    /* Ocultar elementos no esenciales */
+}
+
+body.reader-mode header,
+body.reader-mode nav,
+body.reader-mode .breadcrumbs,
+body.reader-mode .share-buttons,
+body.reader-mode .related-posts,
+body.reader-mode .newsletter,
+body.reader-mode .comments-section,
+body.reader-mode footer,
+body.reader-mode .sidebar,
+body.reader-mode #sidebar-toc,
+body.reader-mode .tags,
+body.reader-mode .category-label,
+body.reader-mode .post-meta,
+body.reader-mode .reading-time,
+body.reader-mode .pagination {
+    display: none !important;
+}
+
+/* Contenedor principal centrado */
+body.reader-mode main {
+    max-width: 750px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+}
+
+body.reader-mode .post,
+body.reader-mode .post-content {
+    max-width: 100%;
+}
+
+/* Tipografía optimizada */
+body.reader-mode .post-content {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: #e0e0e0;
+}
+
+body.reader-mode .post-title,
+body.reader-mode h1 {
+    font-size: 2.5rem;
+    line-height: 1.2;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+body.reader-mode h2 {
+    font-size: 1.875rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+body.reader-mode h3 {
+    font-size: 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+}
+
+body.reader-mode p {
+    margin: 1.5em 0;
+    text-align: justify;
+}
+
+/* Elementos inline */
+body.reader-mode a {
+    color: #00d4ff;
+    text-decoration: underline;
+    text-decoration-color: rgba(0, 212, 255, 0.4);
+    text-underline-offset: 0.2em;
+}
+
+body.reader-mode a:hover {
+    text-decoration-color: #00d4ff;
+}
+
+body.reader-mode code {
+    background: rgba(0, 212, 255, 0.1);
+    padding: 0.2em 0.4em;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+}
+
+body.reader-mode pre {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 2rem 0;
+}
+
+body.reader-mode blockquote {
+    font-style: italic;
+    font-size: 1.125rem;
+    padding-left: 1.5rem;
+    border-left: 4px solid rgba(0, 212, 255, 0.5);
+    color: rgba(255, 255, 255, 0.8);
+    margin: 2rem 0;
+}
+
+body.reader-mode img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 2rem 0;
+}
+
+/* Listas */
+body.reader-mode ul,
+body.reader-mode ol {
+    margin: 1.5rem 0;
+    padding-left: 2rem;
+}
+
+body.reader-mode li {
+    margin: 0.75rem 0;
+}
+
+/* Tablas */
+body.reader-mode table {
+    font-size: 1rem;
+    margin: 2rem 0;
+}
+
+/* Mantener visible los botones del post header */
+body.reader-mode .post-header {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.reader-mode .bookmark-btn {
+    display: inline-flex !important;
+}
+
+body.reader-mode .reader-mode-toggle {
+    display: inline-flex !important;
+}
+
+/* Light theme */
+[data-theme="light"].reader-mode .post-content {
+    color: #333;
+}
+
+[data-theme="light"] .reader-mode-toggle {
+    background: rgba(0, 122, 255, 0.1);
+    border-color: rgba(0, 122, 255, 0.3);
+    color: #007aff;
+}
+
+[data-theme="light"] .reader-mode-toggle:hover {
+    background: rgba(0, 122, 255, 0.2);
+    border-color: #007aff;
+}
+
+[data-theme="light"] .reader-mode-notification {
+    background: rgba(0, 122, 255, 0.95);
+    color: #fff;
+}
+
+[data-theme="light"].reader-mode a {
+    color: #007aff;
+    text-decoration-color: rgba(0, 122, 255, 0.4);
+}
+
+[data-theme="light"].reader-mode code {
+    background: rgba(0, 122, 255, 0.1);
+}
+
+[data-theme="light"].reader-mode pre {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="light"].reader-mode blockquote {
+    color: rgba(0, 0, 0, 0.7);
+    border-left-color: rgba(0, 122, 255, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .reader-mode-toggle span {
+        display: none;
+    }
+    
+    body.reader-mode main {
+        padding: 2rem 1rem;
+    }
+    
+    body.reader-mode .post-title,
+    body.reader-mode h1 {
+        font-size: 2rem;
+    }
+    
+    body.reader-mode .post-content {
+        font-size: 1rem;
+    }
+    
+    .reader-mode-notification {
+        left: 1rem;
+        right: 1rem;
+        bottom: 1rem;
+    }
+}

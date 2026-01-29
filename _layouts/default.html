@@ -9,6 +9,9 @@
     <!-- SEO Avanzado -->
     {% include seo-enhanced.html %}
     
+    <!-- Security Headers -->
+    {% include security-headers.html %}
+    
     <!-- PWA -->
     <link rel="manifest" href="{{ '/manifest.json' | relative_url }}">
     <meta name="theme-color" content="{{ site.pwa.theme_color | default: '#00d4ff' }}">
@@ -23,6 +26,7 @@
     <link rel="dns-prefetch" href="https://unpkg.com">
     <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
     <link rel="stylesheet" href="{{ '/assets/css/accessibility.css' | relative_url }}">
+    <link rel="stylesheet" href="{{ '/assets/css/print.css' | relative_url }}" media="print">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -53,6 +57,8 @@
     
     <!-- Scripts -->
     <script src="{{ '/assets/js/main.js' | relative_url }}"></script>
+    <script src="{{ '/assets/js/bookmarks.js' | relative_url }}"></script>
+    <script src="{{ '/assets/js/reader-mode.js' | relative_url }}"></script>
     
     <!-- PWA Service Worker -->
     <script>

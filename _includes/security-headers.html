@@ -1,0 +1,164 @@
+<!-- ================================================
+     SECURITY HEADERS - AI TECH BLOG
+     ================================================
+     
+     Headers de seguridad para proteger contra:
+     - XSS (Cross-Site Scripting)
+     - Clickjacking
+     - MIME sniffing
+     - Content injection
+     
+     NOTA: En GitHub Pages, estos headers son limitados.
+     Para producción completa, configurar en:
+     - Cloudflare (Transform Rules)
+     - Netlify (_headers file)
+     - Vercel (vercel.json)
+     - Servidor web (nginx, apache)
+================================================ -->
+
+<!-- Content Security Policy (CSP) -->
+<!-- Controla qué recursos pueden cargarse -->
+<meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://utteranc.es https://giscus.app;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src 'self' https://fonts.gstatic.com;
+    img-src 'self' data: https: http:;
+    connect-src 'self' https://www.google-analytics.com;
+    frame-src https://utteranc.es https://giscus.app https://www.youtube.com https://www.youtube-nocookie.com;
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    frame-ancestors 'self';
+    upgrade-insecure-requests;
+">
+
+<!-- X-Frame-Options -->
+<!-- Previene clickjacking al evitar que el sitio sea embebido en iframes -->
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+
+<!-- X-Content-Type-Options -->
+<!-- Previene MIME sniffing, fuerza al navegador a respetar Content-Type -->
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+
+<!-- Referrer Policy -->
+<!-- Controla qué información se envía en el header Referer -->
+<meta name="referrer" content="strict-origin-when-cross-origin">
+
+<!-- Permissions Policy (antes Feature Policy) -->
+<!-- Controla qué APIs del navegador pueden usarse -->
+<meta http-equiv="Permissions-Policy" content="
+    geolocation=(),
+    microphone=(),
+    camera=(),
+    payment=(),
+    usb=(),
+    magnetometer=(),
+    gyroscope=(),
+    accelerometer=()
+">
+
+<!-- 
+================================================
+CONFIGURACION PARA DEPLOYMENT FULL
+================================================
+
+Para máxima seguridad en producción, configurar estos headers 
+en tu CDN o servidor web:
+
+CLOUDFLARE:
+-----------
+Rules > Transform Rules > Modify Response Header
+
+Header Name: Content-Security-Policy
+Value: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;
+
+Header Name: X-Frame-Options
+Value: SAMEORIGIN
+
+Header Name: X-Content-Type-Options
+Value: nosniff
+
+Header Name: Strict-Transport-Security
+Value: max-age=31536000; includeSubDomains; preload
+
+Header Name: Permissions-Policy
+Value: geolocation=(), microphone=(), camera=()
+
+NETLIFY (_headers file):
+------------------------
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+VERCEL (vercel.json):
+---------------------
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "geolocation=(), microphone=(), camera=()"
+        }
+      ]
+    }
+  ]
+}
+
+NGINX:
+------
+add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;" always;
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+
+APACHE (.htaccess):
+-------------------
+<IfModule mod_headers.c>
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+</IfModule>
+
+================================================
+TESTING SECURITY HEADERS
+================================================
+
+1. Securityheaders.com:
+   https://securityheaders.com/?q=https://dev-jcgi.github.io/blog/
+   
+2. Mozilla Observatory:
+   https://observatory.mozilla.org/analyze/dev-jcgi.github.io
+   
+3. Chrome DevTools:
+   Network > Headers > Response Headers
+
+================================================
+-->

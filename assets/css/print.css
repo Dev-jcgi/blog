@@ -1,0 +1,421 @@
+/* ================================================
+   PRINT STYLESHEET - AI TECH BLOG
+   ================================================
+   
+   Optimizado para:
+   - Impresión física de posts
+   - Exportación a PDF
+   - Lectura offline profesional
+   - Conservación de recursos (tinta)
+   
+   Características:
+   - Oculta navegación y elementos interactivos
+   - Optimiza tipografía para papel
+   - Previene saltos de página inconvenientes
+   - Expande URLs de enlaces
+   - Fondo blanco, texto negro (ahorro tinta)
+================================================ */
+
+@media print {
+    /* ================================================
+       CONFIGURACION GLOBAL
+    ================================================ */
+    
+    * {
+        background: transparent !important;
+        color: #000 !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+    
+    body {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 12pt;
+        line-height: 1.6;
+        color: #000;
+        background: #fff;
+        margin: 2cm;
+    }
+    
+    /* ================================================
+       OCULTAR ELEMENTOS NO IMPRIMIBLES
+    ================================================ */
+    
+    /* Navegación y controles */
+    header,
+    nav,
+    .navbar,
+    .breadcrumbs,
+    footer,
+    .site-footer,
+    #sidebar-toggle,
+    .theme-toggle,
+    .scroll-to-top,
+    .share-buttons,
+    .related-posts,
+    .newsletter,
+    .comments-section,
+    .sidebar,
+    #sidebar-toc,
+    .pagination,
+    .search-bar,
+    .tags,
+    .category-label,
+    .copy-code-btn,
+    button,
+    .back-to-top,
+    .action-buttons,
+    .error-actions,
+    .quick-links {
+        display: none !important;
+    }
+    
+    /* ================================================
+       CONTENIDO PRINCIPAL
+    ================================================ */
+    
+    .post,
+    .post-content,
+    article,
+    main {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+        float: none !important;
+    }
+    
+    /* ================================================
+       TIPOGRAFIA
+    ================================================ */
+    
+    h1, h2, h3, h4, h5, h6 {
+        color: #000;
+        page-break-after: avoid;
+        page-break-inside: avoid;
+        font-weight: bold;
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
+    }
+    
+    h1 {
+        font-size: 24pt;
+        border-bottom: 2pt solid #000;
+        padding-bottom: 0.3em;
+    }
+    
+    h2 {
+        font-size: 18pt;
+        border-bottom: 1pt solid #999;
+        padding-bottom: 0.2em;
+    }
+    
+    h3 {
+        font-size: 14pt;
+    }
+    
+    h4, h5, h6 {
+        font-size: 12pt;
+    }
+    
+    p {
+        margin: 0.5em 0;
+        orphans: 3;
+        widows: 3;
+        text-align: justify;
+    }
+    
+    /* ================================================
+       ENLACES
+    ================================================ */
+    
+    a {
+        color: #000;
+        text-decoration: underline;
+    }
+    
+    /* Mostrar URL después del enlace */
+    a[href]:after {
+        content: " (" attr(href) ")";
+        font-size: 9pt;
+        color: #666;
+        word-break: break-all;
+    }
+    
+    /* No mostrar URLs para enlaces internos o anclas */
+    a[href^="#"]:after,
+    a[href^="javascript:"]:after,
+    a.no-print-url:after {
+        content: "";
+    }
+    
+    /* ================================================
+       CODIGO
+    ================================================ */
+    
+    pre,
+    code {
+        background: #f4f4f4 !important;
+        border: 1pt solid #ddd !important;
+        page-break-inside: avoid;
+        font-family: "Courier New", Courier, monospace;
+        font-size: 9pt;
+        line-height: 1.4;
+    }
+    
+    pre {
+        padding: 10pt;
+        margin: 1em 0;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+    
+    code {
+        padding: 2pt 4pt;
+    }
+    
+    /* ================================================
+       BLOCKQUOTES
+    ================================================ */
+    
+    blockquote {
+        border-left: 3pt solid #000;
+        padding-left: 1em;
+        margin: 1em 0;
+        font-style: italic;
+        page-break-inside: avoid;
+        color: #333;
+    }
+    
+    /* ================================================
+       LISTAS
+    ================================================ */
+    
+    ul, ol {
+        margin: 0.5em 0;
+        padding-left: 2em;
+    }
+    
+    li {
+        margin: 0.3em 0;
+    }
+    
+    /* ================================================
+       IMAGENES
+    ================================================ */
+    
+    img {
+        max-width: 100%;
+        height: auto;
+        page-break-inside: avoid;
+        page-break-after: avoid;
+        display: block;
+        margin: 1em auto;
+        border: 1pt solid #ddd;
+    }
+    
+    figure {
+        page-break-inside: avoid;
+        margin: 1em 0;
+    }
+    
+    figcaption {
+        font-size: 9pt;
+        font-style: italic;
+        text-align: center;
+        margin-top: 0.5em;
+    }
+    
+    /* ================================================
+       TABLAS
+    ================================================ */
+    
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        page-break-inside: avoid;
+        margin: 1em 0;
+        font-size: 10pt;
+    }
+    
+    thead {
+        display: table-header-group;
+        font-weight: bold;
+        background: #f0f0f0 !important;
+    }
+    
+    tfoot {
+        display: table-footer-group;
+    }
+    
+    tbody {
+        display: table-row-group;
+    }
+    
+    tr {
+        page-break-inside: avoid;
+    }
+    
+    th, td {
+        border: 1pt solid #ddd;
+        padding: 8pt;
+        text-align: left;
+    }
+    
+    th {
+        background: #f0f0f0 !important;
+        font-weight: bold;
+    }
+    
+    /* ================================================
+       METADATOS DEL POST
+    ================================================ */
+    
+    .post-meta,
+    .post-header {
+        margin-bottom: 1em;
+        padding-bottom: 0.5em;
+        border-bottom: 1pt solid #ccc;
+    }
+    
+    .post-date,
+    .reading-time,
+    .post-author {
+        display: inline-block;
+        font-size: 10pt;
+        color: #666 !important;
+        margin-right: 1em;
+    }
+    
+    /* ================================================
+       SALTOS DE PAGINA
+    ================================================ */
+    
+    /* Evitar saltos de página dentro de estos elementos */
+    pre,
+    blockquote,
+    table,
+    figure,
+    img,
+    .highlight,
+    .code-block {
+        page-break-inside: avoid;
+    }
+    
+    /* Evitar saltos de página después de títulos */
+    h1, h2, h3, h4, h5, h6 {
+        page-break-after: avoid;
+    }
+    
+    /* Forzar salto de página antes de secciones principales */
+    .section-break {
+        page-break-before: always;
+    }
+    
+    /* ================================================
+       ENCABEZADO Y PIE DE PAGINA
+    ================================================ */
+    
+    @page {
+        margin: 2cm;
+        
+        @top-right {
+            content: counter(page);
+            font-size: 9pt;
+            color: #666;
+        }
+        
+        @top-left {
+            content: "AI Tech Blog";
+            font-size: 9pt;
+            color: #666;
+        }
+    }
+    
+    /* Primera página sin encabezado */
+    @page :first {
+        @top-left {
+            content: "";
+        }
+        @top-right {
+            content: "";
+        }
+    }
+    
+    /* ================================================
+       INFORMACION DE IMPRESION
+    ================================================ */
+    
+    /* Mostrar información de impresión al inicio */
+    .print-info {
+        display: block !important;
+        font-size: 9pt;
+        color: #666 !important;
+        margin-bottom: 2em;
+        padding: 1em;
+        border: 1pt dashed #999;
+        text-align: center;
+    }
+    
+    /* Crear automáticamente info de impresión */
+    body:before {
+        content: "Documento impreso desde AI Tech Blog - " attr(data-url) " - " attr(data-print-date);
+        display: block;
+        font-size: 8pt;
+        color: #999 !important;
+        text-align: center;
+        margin-bottom: 2em;
+        padding: 0.5em;
+        border-bottom: 1pt solid #ddd;
+    }
+    
+    /* ================================================
+       OPTIMIZACIONES ESPECIFICAS
+    ================================================ */
+    
+    /* Ocultar decoraciones SVG */
+    svg {
+        display: none !important;
+    }
+    
+    /* Simplificar bordes */
+    .border,
+    .border-top,
+    .border-bottom {
+        border-color: #000 !important;
+    }
+    
+    /* Remover sombras y efectos */
+    .shadow,
+    .glow,
+    .gradient {
+        box-shadow: none !important;
+        background: transparent !important;
+    }
+    
+    /* ================================================
+       ABREVIATURAS Y ACRONIMOS
+    ================================================ */
+    
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+        font-size: 9pt;
+        color: #666;
+    }
+    
+    /* ================================================
+       NOTAS AL PIE (si las hay)
+    ================================================ */
+    
+    .footnotes {
+        page-break-before: always;
+        border-top: 2pt solid #000;
+        padding-top: 1em;
+        margin-top: 2em;
+        font-size: 10pt;
+    }
+    
+    /* ================================================
+       FIN DEL PRINT STYLESHEET
+    ================================================ */
+}

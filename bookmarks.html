@@ -1,0 +1,181 @@
+---
+layout: default
+title: Mis Bookmarks
+permalink: /bookmarks/
+---
+
+<div class="bookmarks-page">
+    <div class="bookmarks-header">
+        <div>
+            <h1>📚 Mis Bookmarks</h1>
+            <p>Posts guardados para leer después</p>
+        </div>
+        <div class="bookmarks-actions">
+            <button id="export-bookmarks" title="Exportar bookmarks a JSON">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Exportar
+            </button>
+            <button id="import-bookmarks" title="Importar bookmarks desde JSON">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                Importar
+            </button>
+            <input type="file" id="import-file" accept=".json" style="display: none;">
+            <button id="clear-bookmarks" title="Eliminar todos los bookmarks">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                Limpiar
+            </button>
+        </div>
+    </div>
+    
+    <div class="bookmarks-stats" style="margin-bottom: 2rem; padding: 1rem; background: rgba(0, 212, 255, 0.05); border-radius: 0.5rem; text-align: center;">
+        <span id="bookmarks-count" style="font-size: 1.1rem; color: #00d4ff;">0 bookmarks guardados</span>
+    </div>
+    
+    <div id="bookmarks-container">
+        <div class="bookmarks-empty">
+            <div class="bookmarks-empty-icon">📖</div>
+            <h2 class="bookmarks-empty-title">No hay bookmarks guardados</h2>
+            <p class="bookmarks-empty-text">Los posts que guardes aparecerán aquí para acceso rápido</p>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+    
+    const container = document.getElementById('bookmarks-container');
+    const countDisplay = document.getElementById('bookmarks-count');
+    const exportBtn = document.getElementById('export-bookmarks');
+    const importBtn = document.getElementById('import-bookmarks');
+    const importFile = document.getElementById('import-file');
+    const clearBtn = document.getElementById('clear-bookmarks');
+    
+    // Renderizar bookmarks
+    function renderBookmarks() {
+        const bookmarks = window.BookmarkManager.getAll();
+        
+        // Actualizar contador
+        countDisplay.textContent = `${bookmarks.length} bookmark${bookmarks.length !== 1 ? 's' : ''} guardado${bookmarks.length !== 1 ? 's' : ''}`;
+        
+        if (bookmarks.length === 0) {
+            container.innerHTML = `
+                <div class="bookmarks-empty">
+                    <div class="bookmarks-empty-icon">📖</div>
+                    <h2 class="bookmarks-empty-title">No hay bookmarks guardados</h2>
+                    <p class="bookmarks-empty-text">Los posts que guardes aparecerán aquí para acceso rápido</p>
+                </div>
+            `;
+            return;
+        }
+        
+        const html = `
+            <div class="bookmarks-list">
+                ${bookmarks.map(bookmark => `
+                    <div class="bookmark-item" data-url="${bookmark.url}">
+                        <div class="bookmark-item-header">
+                            <a href="${bookmark.url}" class="bookmark-item-title">${bookmark.title}</a>
+                            <button class="bookmark-remove-btn" data-url="${bookmark.url}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                                Quitar
+                            </button>
+                        </div>
+                        <div class="bookmark-item-meta">
+                            ${bookmark.category ? `<span>📁 ${bookmark.category}</span>` : ''}
+                            ${bookmark.date ? `<span>📅 ${bookmark.date}</span>` : ''}
+                            <span>🔖 Guardado: ${formatDate(bookmark.addedAt)}</span>
+                        </div>
+                        ${bookmark.excerpt ? `<p class="bookmark-item-excerpt">${bookmark.excerpt}</p>` : ''}
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        
+        container.innerHTML = html;
+        
+        // Event listeners para botones de quitar
+        container.querySelectorAll('.bookmark-remove-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const url = btn.getAttribute('data-url');
+                const result = window.BookmarkManager.remove(url);
+                if (result.success) {
+                    renderBookmarks();
+                }
+            });
+        });
+    }
+    
+    // Formatear fecha
+    function formatDate(isoString) {
+        const date = new Date(isoString);
+        const now = new Date();
+        const diff = now - date;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        
+        if (days === 0) return 'Hoy';
+        if (days === 1) return 'Ayer';
+        if (days < 7) return `Hace ${days} días`;
+        if (days < 30) return `Hace ${Math.floor(days / 7)} semanas`;
+        
+        return date.toLocaleDateString('es-ES', { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric' 
+        });
+    }
+    
+    // Exportar
+    exportBtn.addEventListener('click', () => {
+        window.BookmarkManager.export();
+    });
+    
+    // Importar
+    importBtn.addEventListener('click', () => {
+        importFile.click();
+    });
+    
+    importFile.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            window.BookmarkManager.import(file)
+                .then(result => {
+                    alert(result.message);
+                    renderBookmarks();
+                    importFile.value = '';
+                })
+                .catch(error => {
+                    alert(error.message);
+                });
+        }
+    });
+    
+    // Limpiar
+    clearBtn.addEventListener('click', () => {
+        const result = window.BookmarkManager.clear();
+        if (result.success) {
+            renderBookmarks();
+        }
+    });
+    
+    // Escuchar actualizaciones
+    window.addEventListener('bookmarksUpdated', renderBookmarks);
+    
+    // Renderizar inicial
+    renderBookmarks();
+})();
+</script>
