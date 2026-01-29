@@ -3,10 +3,10 @@ title: AI Tech Blog
 description: >-
   Explorando el Futuro de la Inteligencia Artificial. 
   Noticias, tutoriales y análisis sobre IA, Machine Learning, Deep Learning y tecnologías emergentes.
-author: Tu Nombre
-email: tu@email.com
-baseurl: "" # Subpath del sitio, ej: /blog
-url: "" # URL base del sitio, ej: https://username.github.io
+author: AI Tech Team
+email: dev.jcgi@example.com
+baseurl: "/blog" # Subpath del sitio, ej: /blog
+url: "https://dev-jcgi.github.io" # URL base del sitio, ej: https://username.github.io
 
 # Build settings
 markdown: kramdown
@@ -52,6 +52,9 @@ exclude:
   - GITHUB-PAGES.md
   - INICIO-RAPIDO.txt
   - Crear_Post.md
+  - GENERAR-ICONOS.md
+  - OPTIMIZACION.md
+  - MEJORAS-IMPLEMENTADAS.md
   - serve.ps1
   - start-blog.ps1
 
@@ -91,7 +94,7 @@ timezone: America/Mexico_City
 comments:
   provider: "utterances"
   utterances:
-    repo: "tu-usuario/blogtc"  # IMPORTANTE: Cambia por tu usuario/repositorio de GitHub
+    repo: "Dev-jcgi/blog"  # IMPORTANTE: Cambia por tu usuario/repositorio de GitHub
     issue-term: "pathname"
     theme: "github-dark"  # Tema oscuro que combina con el diseño tech
 

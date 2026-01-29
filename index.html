@@ -32,7 +32,13 @@ title: Home
             <article class="post-card" data-title="{{ post.title | downcase }}" data-category="{{ post.category | downcase }}" data-tags="{{ post.tags | join: ',' | downcase }}">
                 <a href="{{ post.url | relative_url }}" class="post-card-link">
                     {% if post.image %}
-                    <img src="{{ post.image }}" alt="{{ post.title }}" class="post-image">
+                    <img src="{{ post.image }}" 
+                         alt="{{ post.title }}" 
+                         class="post-image"
+                         loading="lazy"
+                         decoding="async"
+                         width="400"
+                         height="225">
                     {% else %}
                     <div class="post-image">🤖</div>
                     {% endif %}

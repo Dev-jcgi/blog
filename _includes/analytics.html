@@ -1,15 +1,24 @@
-<!-- Google Analytics -->
+<!-- Google Analytics 4 -->
 {% if site.google_analytics %}
 <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.google_analytics }}"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', '{{ site.google_analytics }}');
+  gtag('config', '{{ site.google_analytics }}', {
+    'anonymize_ip': true,
+    'cookie_flags': 'SameSite=None;Secure'
+  });
 </script>
 {% endif %}
 
 <!-- Plausible Analytics (Alternativa privacy-focused) -->
 {% if site.plausible_domain %}
 <script defer data-domain="{{ site.plausible_domain }}" src="https://plausible.io/js/script.js"></script>
+{% endif %}
+
+<!-- GoatCounter (Alternativa Open Source y Gratuita) -->
+{% if site.goatcounter %}
+<script data-goatcounter="https://{{ site.goatcounter }}.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 {% endif %}

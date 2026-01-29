@@ -24,7 +24,12 @@ layout: default
             
             {% if page.image %}
             <div class="post-featured-image">
-                <img src="{{ page.image }}" alt="{{ page.title }}">
+                <img src="{{ page.image }}" 
+                     alt="{{ page.title }}" 
+                     loading="lazy"
+                     decoding="async"
+                     width="900"
+                     height="506">
             </div>
             {% endif %}
             

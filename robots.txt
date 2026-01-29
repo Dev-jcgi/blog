@@ -1,0 +1,20 @@
+# robots.txt para AI Tech Blog
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: {{ site.url }}{{ site.baseurl }}/sitemap.xml
+
+# Archivos excluidos
+Disallow: /assets/images/drafts/
+Disallow: /_*
+
+# Crawl-delay para bots específicos
+User-agent: Googlebot
+Allow: /
+
+User-agent: bingbot
+Allow: /
+
+User-agent: Slurp
+Crawl-delay: 1

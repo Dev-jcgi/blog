@@ -354,6 +354,7 @@ function initThemeToggle() {
     document.documentElement.setAttribute('data-theme', themePreference);
     if (themeToggle) {
         themeToggle.classList.toggle('active', themePreference === 'light');
+        themeToggle.setAttribute('aria-pressed', themePreference === 'light');
     }
     
     // Event listener para el toggle
@@ -365,6 +366,7 @@ function initThemeToggle() {
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
             this.classList.toggle('active');
+            this.setAttribute('aria-pressed', newTheme === 'light');
         });
     }
 }
