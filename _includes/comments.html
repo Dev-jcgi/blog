@@ -1,0 +1,48 @@
+<!-- Comments Section usando Utterances con GitHub Issues -->
+{% if site.comments.provider == "utterances" %}
+<section class="comments-section">
+    <div class="container">
+        <h3 class="comments-title">💬 Comentarios</h3>
+        <p class="comments-subtitle">Inicia sesión con tu cuenta de GitHub para comentar. Los comentarios se almacenan como Issues en el repositorio del blog.</p>
+        <script src="https://utteranc.es/client.js"
+                repo="{{ site.comments.utterances.repo }}"
+                issue-term="{{ site.comments.utterances.issue-term }}"
+                theme="{{ site.comments.utterances.theme }}"
+                crossorigin="anonymous"
+                async>
+        </script>
+    </div>
+</section>
+{% endif %}
+
+<style>
+.comments-section {
+    max-width: 800px;
+    margin: 4rem auto;
+    padding: 0 2rem;
+}
+
+    margin-bottom: 0.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.comments-subtitle {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+#disqus_thread {
+    margin-top: 2rem;
+}
+
+/* Mejorar contraste del iframe de Disqus en modo oscuro */
+#disqus_thread iframe {
+    color-scheme: auto;
+}
+</style>
+#disqus_thread {
+    margin-top: 2rem;
+}

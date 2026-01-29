@@ -1,0 +1,218 @@
+<!-- Posts Relacionados -->
+{% if page.layout == 'post' %}
+<section class="related-posts">
+    <div class="container">
+        <h3 class="related-posts-title">Artículos Relacionados</h3>
+        
+        <!-- Buscar posts relacionados por categoría y tags -->
+        {% assign related_posts = '' | split: '' %}
+        {% assign max_related = 3 %}
+        
+        <!-- Primero buscar posts de la misma categoría -->
+        {% for post in site.posts %}
+            {% if post.url != page.url and post.category == page.category %}
+                {% assign related_posts = related_posts | push: post %}
+            {% endif %}
+        {% endfor %}
+        
+        <!-- Si no hay suficientes, buscar por tags -->
+        {% if related_posts.size < max_related %}
+            {% for post in site.posts %}
+                {% if post.url != page.url %}
+                    {% assign common_tags = 0 %}
+                    {% for tag in post.tags %}
+                        {% if page.tags contains tag %}
+                            {% assign common_tags = common_tags | plus: 1 %}
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if common_tags > 0 %}
+                        {% unless related_posts contains post %}
+                            {% assign related_posts = related_posts | push: post %}
+                        {% endunless %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        
+        <!-- Limitar a max_related posts -->
+        {% assign related_posts = related_posts | slice: 0, max_related %}
+        
+        {% if related_posts.size > 0 %}
+        <div class="related-posts-grid">
+            {% for post in related_posts %}
+            <article class="related-post-card">
+                <a href="{{ post.url | relative_url }}" class="related-post-link">
+                    {% if post.image %}
+                    <div class="related-post-image" style="background-image: url('{{ post.image }}')"></div>
+                    {% else %}
+                    <div class="related-post-image related-post-placeholder">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="related-post-content">
+                        <div class="related-post-meta">
+                            <span class="related-post-category">{{ post.category }}</span>
+                            <time class="related-post-date">{{ post.date | date: "%d %b %Y" }}</time>
+                        </div>
+                        <h4 class="related-post-title">{{ post.title }}</h4>
+                        <p class="related-post-excerpt">{{ post.excerpt | strip_html | truncate: 80 }}</p>
+                        
+                        {% if post.tags %}
+                        <div class="related-post-tags">
+                            {% for tag in post.tags limit:2 %}
+                            <span class="related-tag">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </a>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="no-related-posts">No hay artículos relacionados disponibles.</p>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+
+<style>
+.related-posts {
+    margin: 4rem 0;
+    padding: 3rem 0;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.related-posts-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    text-align: center;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.related-posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.related-post-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+.related-post-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-lg);
+}
+
+.related-post-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.related-post-image {
+    width: 100%;
+    height: 180px;
+    background-size: cover;
+    background-position: center;
+    background-color: rgba(0, 212, 255, 0.1);
+}
+
+.related-post-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(131, 56, 236, 0.2));
+}
+
+.related-post-placeholder svg {
+    width: 48px;
+    height: 48px;
+    color: var(--primary);
+}
+
+.related-post-content {
+    padding: 1.5rem;
+}
+
+.related-post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.related-post-category {
+    padding: 0.25rem 0.75rem;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid var(--primary);
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--primary);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.related-post-date {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.related-post-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+    color: var(--text-primary);
+}
+
+.related-post-excerpt {
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.related-post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.related-tag {
+    padding: 0.25rem 0.5rem;
+    background: rgba(131, 56, 236, 0.1);
+    color: var(--accent);
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+}
+
+.no-related-posts {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 2rem;
+}
+
+@media (max-width: 768px) {
+    .related-posts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>

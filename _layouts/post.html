@@ -1,0 +1,320 @@
+---
+layout: default
+---
+
+<!-- Barra de progreso de lectura -->
+<div class="reading-progress">
+    <div class="reading-progress-bar"></div>
+</div>
+
+<article class="post-article">
+    <header class="post-header">
+        <div class="container">
+            <div class="post-meta-header">
+                <span class="post-category">{{ page.category }}</span>
+                <time class="post-date" datetime="{{ page.date | date_to_xmlschema }}">
+                    {{ page.date | date: "%d de %B, %Y" }}
+                </time>
+            </div>
+            <h1 class="post-title-large">{{ page.title }}</h1>
+            
+            {% if page.excerpt %}
+            <p class="post-excerpt-large">{{ page.excerpt }}</p>
+            {% endif %}
+            
+            {% if page.image %}
+            <div class="post-featured-image">
+                <img src="{{ page.image }}" alt="{{ page.title }}">
+            </div>
+            {% endif %}
+            
+            {% if page.tags %}
+            <div class="post-tags">
+                {% for tag in page.tags %}
+                <span class="tag">{{ tag }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </header>
+    
+    <div class="post-content-wrapper">
+        <div class="container">
+            <div class="post-layout-grid">
+                <div class="post-body-content">
+                    <!-- Tabla de contenidos -->
+                    {% include toc.html %}
+                    
+                    {{ content }}
+                </div>
+            </div>
+            
+            <div class="post-footer">
+                <div class="post-author">
+                    <p><strong>Autor:</strong> {{ site.author }}</p>
+                </div>
+                
+                <!-- Botones de compartir mejorados -->
+                {% include share-buttons.html %}
+            </div>
+            
+            <nav class="post-navigation">
+                {% if page.previous.url %}
+                <a href="{{ page.previous.url | relative_url }}" class="nav-prev">
+                    <span class="nav-label">← Anterior</span>
+                    <span class="nav-title">{{ page.previous.title }}</span>
+                </a>
+                {% endif %}
+                
+                {% if page.next.url %}
+                <a href="{{ page.next.url | relative_url }}" class="nav-next">
+                    <span class="nav-label">Siguiente →</span>
+                    <span class="nav-title">{{ page.next.title }}</span>
+                </a>
+                {% endif %}
+            </nav>
+        </div>
+    </div>
+</article>
+
+<!-- Posts Relacionados -->
+{% include related-posts.html %}
+
+<!-- Comentarios -->
+{% if page.comments != false %}
+    {% include comments.html %}
+{% endif %}
+
+<style>
+/* Barra de progreso de lectura */
+.reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+}
+
+.reading-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    width: 0%;
+    transition: width 0.1s ease-out;
+}
+
+.post-article {
+    padding-top: 2rem;
+}
+
+.post-header {
+    text-align: center;
+    padding: 3rem 0;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.post-meta-header {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.post-title-large {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.post-excerpt-large {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin: 1.5rem auto;
+    max-width: 700px;
+    line-height: 1.6;
+}
+
+.post-featured-image {
+    margin: 2rem auto;
+    max-width: 900px;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.post-featured-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.post-content-wrapper {
+    padding: 4rem 0;
+}
+
+.post-layout-grid {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.post-body-content {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+}
+
+.post-body-content h1,
+.post-body-content h2,
+.post-body-content h3 {
+    color: var(--text-primary);
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.post-body-content h2 {
+    font-size: 2rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.post-body-content h3 {
+    font-size: 1.5rem;
+}
+
+.post-body-content p {
+    margin-bottom: 1.5rem;
+}
+
+.post-body-content ul,
+.post-body-content ol {
+    margin: 1.5rem 0;
+    padding-left: 2rem;
+}
+
+.post-body-content li {
+    margin-bottom: 0.75rem;
+}
+
+.post-body-content code {
+    background: var(--bg-card);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--primary);
+}
+
+.post-body-content pre {
+    background: var(--bg-card);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    border: 1px solid var(--border-color);
+    margin: 2rem 0;
+}
+
+.post-body-content pre code {
+    background: none;
+    padding: 0;
+}
+
+.post-body-content a {
+    color: var(--primary);
+    text-decoration: none;
+    border-bottom: 1px solid var(--primary);
+    transition: all 0.3s;
+}
+
+.post-body-content a:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.post-body-content blockquote {
+    border-left: 4px solid var(--primary);
+    padding-left: 1.5rem;
+    margin: 2rem 0;
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+.post-body-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 2rem 0;
+}
+
+.post-footer {
+    max-width: 800px;
+    margin: 4rem auto 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--border-color);
+}
+
+.post-author {
+    margin-bottom: 2rem;
+}
+
+.post-navigation {
+    max-width: 800px;
+    margin: 3rem auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.nav-prev,
+.nav-next {
+    padding: 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.nav-prev:hover,
+.nav-next:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.nav-label {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.nav-title {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .post-header {
+        padding: 2rem 0;
+    }
+    
+    .post-title-large {
+        font-size: 1.75rem;
+    }
+    
+    .post-content-wrapper {
+        padding: 2rem 0;
+    }
+    
+    .post-body-content {
+        font-size: 1rem;
+    }
+}
+</style>

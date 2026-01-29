@@ -1,0 +1,105 @@
+═══════════════════════════════════════════════════════════════
+   🚀 INICIO RÁPIDO - AI TECH BLOG (GitHub Pages + Jekyll)
+═══════════════════════════════════════════════════════════════
+
+📝 PASO 1: Actualiza tu información
+
+Abre _config.yml y cambia:
+
+    title: "Tu Título"
+    author: "Tu Nombre"
+    email: "tu@email.com"
+    url: "https://tu-usuario.github.io"
+    baseurl: "/blogtc"    # O "" si tu repo es usuario.github.io
+    
+    comments:
+      utterances:
+        repo: "tu-usuario/blogtc"    ← ¡IMPORTANTE!
+
+───────────────────────────────────────────────────────────────
+
+🌐 PASO 2: Despliega en GitHub Pages
+
+1. Sube el código:
+   
+   git add .
+   git commit -m "Configurar blog"
+   git push origin main
+
+2. En GitHub: Settings → Pages
+   - Source: Branch "main"
+   - Folder: "/ (root)"
+   - Save
+
+3. ¡Espera 2 minutos!
+   Tu blog: https://tu-usuario.github.io/blogtc/
+
+───────────────────────────────────────────────────────────────
+
+💬 PASO 3: Activa comentarios (Utterances)
+
+1. Settings → Features → Habilita "Issues" ✓
+2. Visita: https://github.com/apps/utterances
+3. Click "Install"
+4. Selecciona tu repositorio
+5. ¡Autoriza!
+
+───────────────────────────────────────────────────────────────
+
+📄 PASO 4: Publica tu primer artículo
+
+Crea: _posts/2026-01-28-mi-primer-post.md
+
+Contenido:
+
+---
+title: "Mi Primer Post"
+date: 2026-01-28 15:00:00 -0600
+author: "Tu Nombre"
+category: "Tutorial"
+tags: ["Blog", "IA", "Inicio"]
+description: "Mi primer artículo en el blog"
+comments: true
+---
+
+# ¡Hola Mundo!
+
+Este es mi primer artículo sobre Inteligencia Artificial...
+
+## Introducción
+
+Contenido aquí...
+
+───────────────────────────────────────────────────────────────
+
+✅ LISTO!
+
+Tu blog incluye:
+  ✓ Diseño dark tech responsive
+  ✓ Comentarios con GitHub Issues
+  ✓ Búsqueda en tiempo real
+  ✓ Categorías y tags
+  ✓ PWA offline-ready
+  ✓ $0/mes de costo
+
+───────────────────────────────────────────────────────────────
+
+📚 MÁS INFORMACIÓN:
+
+- Guía completa: Lee GITHUB-PAGES.md
+- Documentación: Lee README.md
+- Jekyll Docs: https://jekyllrb.com
+- Problemas: Abre un Issue en GitHub
+
+───────────────────────────────────────────────────────────────
+
+💡 DESARROLLO LOCAL (Opcional):
+
+bundle install
+bundle exec jekyll serve --livereload
+
+Luego abre: http://localhost:4000
+
+═══════════════════════════════════════════════════════════════
+                   ¡Feliz blogging! 🎉
+═══════════════════════════════════════════════════════════════

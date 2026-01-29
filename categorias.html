@@ -1,0 +1,193 @@
+---
+layout: default
+title: Categorías
+permalink: /categorias/
+---
+
+<section class="hero-small">
+    <div class="container">
+        <h1 class="page-title">Categorías</h1>
+        <p class="page-subtitle">Explora nuestros artículos por categoría</p>
+    </div>
+</section>
+
+<section class="categories-section">
+    <div class="container">
+        {% assign categories = site.posts | map: 'category' | uniq | sort %}
+        
+        <div class="categories-grid">
+            {% for category in categories %}
+            {% if category %}
+            {% assign posts_in_category = site.posts | where: 'category', category %}
+            <div class="category-card" id="cat-{{ category | slugify }}">
+                <div class="category-header">
+                    <h2 class="category-title">{{ category }}</h2>
+                    <span class="category-count">{{ posts_in_category.size }} artículos</span>
+                </div>
+                
+                <div class="category-posts">
+                    {% for post in posts_in_category limit:5 %}
+                    <article class="category-post-item">
+                        <a href="{{ post.url | relative_url }}" class="post-item-link">
+                            <div class="post-item-content">
+                                <h3 class="post-item-title">{{ post.title }}</h3>
+                                <time class="post-item-date">{{ post.date | date: "%d %b %Y" }}</time>
+                            </div>
+                            <svg class="post-item-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                    </article>
+                    {% endfor %}
+                    
+                    {% if posts_in_category.size > 5 %}
+                    <a href="#cat-{{ category | slugify }}" class="view-all-link" onclick="toggleCategory(event, '{{ category | slugify }}')">
+                        Ver todos los {{ posts_in_category.size }} artículos →
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<style>
+.categories-section {
+    padding: 4rem 0;
+}
+
+.categories-grid {
+    display: grid;
+    gap: 2rem;
+}
+
+.category-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    padding: 2rem;
+    transition: all 0.3s;
+}
+
+.category-card:hover {
+    border-color: var(--primary);
+}
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.category-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.category-count {
+    padding: 0.5rem 1rem;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid var(--primary);
+    border-radius: 2rem;
+    font-size: 0.875rem;
+    color: var(--primary);
+}
+
+.category-posts {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.category-post-item {
+    transition: all 0.3s;
+}
+
+.post-item-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid transparent;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.post-item-link:hover {
+    border-color: var(--primary);
+    background: rgba(0, 212, 255, 0.05);
+    transform: translateX(5px);
+}
+
+.post-item-content {
+    flex: 1;
+}
+
+.post-item-title {
+    color: var(--text-primary);
+    font-size: 1.125rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.post-item-date {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.post-item-arrow {
+    color: var(--primary);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.post-item-link:hover .post-item-arrow {
+    opacity: 1;
+}
+
+.view-all-link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.view-all-link:hover {
+    color: var(--accent);
+    transform: translateX(5px);
+}
+</style>
+
+<script>
+function toggleCategory(event, categoryId) {
+    event.preventDefault();
+    const categoryCard = document.getElementById('cat-' + categoryId);
+    const posts = categoryCard.querySelectorAll('.category-post-item');
+    
+    posts.forEach((post, index) => {
+        if (index >= 5) {
+            post.style.display = post.style.display === 'none' ? 'block' : 'none';
+        }
+    });
+    
+    const link = event.target;
+    if (link.textContent.includes('Ver todos')) {
+        link.textContent = 'Ver menos ↑';
+    } else {
+        link.textContent = link.textContent.replace(/Ver menos.*/, 'Ver todos →');
+    }
+}
+</script>

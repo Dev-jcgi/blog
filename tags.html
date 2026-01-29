@@ -1,0 +1,239 @@
+---
+layout: default
+title: Tags
+permalink: /tags/
+---
+
+<section class="hero-small">
+    <div class="container">
+        <h1 class="page-title">Tags</h1>
+        <p class="page-subtitle">Encuentra artículos por etiquetas</p>
+    </div>
+</section>
+
+<section class="tags-section">
+    <div class="container">
+        <!-- Nube de tags -->
+        <div class="tags-cloud">
+            {% assign all_tags = site.posts | map: 'tags' | join: ',' | split: ',' | uniq | sort %}
+            {% for tag in all_tags %}
+            {% if tag != "" %}
+            {% assign tag_posts = site.posts | where_exp: "post", "post.tags contains tag" %}
+            <a href="#tag-{{ tag | slugify }}" class="tag-cloud-item" data-count="{{ tag_posts.size }}">
+                {{ tag }}
+                <span class="tag-badge">{{ tag_posts.size }}</span>
+            </a>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Lista de posts por tag -->
+        <div class="tags-list">
+            {% for tag in all_tags %}
+            {% if tag != "" %}
+            {% assign tag_posts = site.posts | where_exp: "post", "post.tags contains tag" %}
+            <div class="tag-section" id="tag-{{ tag | slugify }}">
+                <h2 class="tag-section-title">
+                    <span class="tag-icon">#</span>
+                    {{ tag }}
+                    <span class="tag-section-count">{{ tag_posts.size }}</span>
+                </h2>
+                
+                <div class="tag-posts-grid">
+                    {% for post in tag_posts %}
+                    <article class="tag-post-card">
+                        <a href="{{ post.url | relative_url }}" class="tag-post-link">
+                            <div class="tag-post-header">
+                                <span class="post-category-badge">{{ post.category }}</span>
+                                <time class="post-date-small">{{ post.date | date: "%d %b %Y" }}</time>
+                            </div>
+                            <h3 class="tag-post-title">{{ post.title }}</h3>
+                            <p class="tag-post-excerpt">{{ post.excerpt | strip_html | truncate: 100 }}</p>
+                            <div class="tag-post-footer">
+                                {% for post_tag in post.tags limit:3 %}
+                                <span class="mini-tag">{{ post_tag }}</span>
+                                {% endfor %}
+                            </div>
+                        </a>
+                    </article>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<style>
+.tags-section {
+    padding: 4rem 0;
+}
+
+.tags-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 2rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    margin-bottom: 3rem;
+}
+
+.tag-cloud-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid var(--primary);
+    border-radius: 2rem;
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.tag-cloud-item:hover {
+    background: rgba(0, 212, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.tag-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    padding: 0 0.5rem;
+    background: var(--primary);
+    color: #0a0e27;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.tags-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+}
+
+.tag-section {
+    scroll-margin-top: 100px;
+}
+
+.tag-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.tag-icon {
+    color: var(--primary);
+    font-size: 1.5rem;
+}
+
+.tag-section-count {
+    margin-left: auto;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid var(--primary);
+    border-radius: 2rem;
+    font-size: 1rem;
+    color: var(--primary);
+}
+
+.tag-posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.tag-post-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+.tag-post-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-4px);
+}
+
+.tag-post-link {
+    display: block;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+}
+
+.tag-post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.post-category-badge {
+    padding: 0.25rem 0.75rem;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid var(--primary);
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--primary);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.post-date-small {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.tag-post-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.tag-post-excerpt {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.tag-post-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.mini-tag {
+    padding: 0.25rem 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+@media (max-width: 768px) {
+    .tag-posts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tags-cloud {
+        padding: 1rem;
+    }
+}
+</style>

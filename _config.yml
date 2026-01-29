@@ -1,0 +1,103 @@
+# Configuración del Sitio
+title: AI Tech Blog
+description: >-
+  Explorando el Futuro de la Inteligencia Artificial. 
+  Noticias, tutoriales y análisis sobre IA, Machine Learning, Deep Learning y tecnologías emergentes.
+author: Tu Nombre
+email: tu@email.com
+baseurl: "" # Subpath del sitio, ej: /blog
+url: "" # URL base del sitio, ej: https://username.github.io
+
+# Build settings
+markdown: kramdown
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-paginate
+
+# Permalink structure
+permalink: /:year/:month/:day/:title/
+
+# Collections
+collections:
+  posts:
+    output: true
+    permalink: /blog/:year/:month/:day/:title/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      comments: false
+
+# Exclude from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - README.md
+  - DEPLOYMENT.md
+  - LICENSE
+  - QUICKSTART.md
+  - RUBY-UPDATE.md
+  - FEATURES.md
+  - GITHUB-PAGES.md
+  - INICIO-RAPIDO.txt
+  - Crear_Post.md
+  - serve.ps1
+  - start-blog.ps1
+
+# Pagination
+paginate: 9
+paginate_path: "/page:num/"
+
+# Social Links (opcional)
+github_username: tu-usuario
+twitter_username: tu-usuario
+linkedin_username: tu-usuario
+
+# Categories
+category_list:
+  - Machine Learning
+  - Deep Learning
+  - NLP
+  - Computer Vision
+  - Robótica
+  - Ética IA
+  - Tutorial
+  - Noticias
+  - Investigación
+
+# SEO
+lang: es
+timezone: America/Mexico_City
+
+# Google Analytics (opcional)
+# google_analytics: G-XXXXXXXXXX
+
+# Plausible Analytics (opcional - alternativa a Google Analytics)
+# plausible_domain: tudominio.com
+
+# Comentarios con GitHub Issues (Utterances)
+# Gratis, sin publicidad, integrado con GitHub
+comments:
+  provider: "utterances"
+  utterances:
+    repo: "tu-usuario/blogtc"  # IMPORTANTE: Cambia por tu usuario/repositorio de GitHub
+    issue-term: "pathname"
+    theme: "github-dark"  # Tema oscuro que combina con el diseño tech
+
+# PWA
+pwa:
+  enabled: true
+  theme_color: "#00d4ff"
+  background_color: "#0a0e27"
+  display: "standalone"

@@ -1,0 +1,326 @@
+---
+layout: default
+title: Búsqueda
+permalink: /buscar/
+---
+
+<section class="hero-small">
+    <div class="container">
+        <h1 class="page-title">Búsqueda</h1>
+        <p class="page-subtitle">Encuentra el contenido que buscas</p>
+    </div>
+</section>
+
+<section class="search-section">
+    <div class="container">
+        <div class="search-box-large">
+            <svg class="search-icon-large" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" id="search-input" placeholder="Buscar en todo el blog..." class="search-input-large" autofocus>
+        </div>
+
+        <div id="search-results" class="search-results">
+            <div class="search-info">
+                <p class="search-placeholder">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <span>Comienza a escribir para buscar artículos...</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://unpkg.com/lunr/lunr.js"></script>
+<script>
+(function() {
+    // Datos de búsqueda
+    const searchData = [
+        {% for post in site.posts %}
+        {
+            id: "{{ forloop.index }}",
+            title: {{ post.title | jsonify }},
+            url: {{ post.url | relative_url | jsonify }},
+            date: {{ post.date | date: "%d %b %Y" | jsonify }},
+            category: {{ post.category | jsonify }},
+            tags: {{ post.tags | jsonify }},
+            excerpt: {{ post.excerpt | strip_html | truncate: 200 | jsonify }},
+            content: {{ post.content | strip_html | jsonify }}
+        }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+    ];
+
+    // Configurar Lunr
+    const idx = lunr(function() {
+        this.ref('id');
+        this.field('title', { boost: 10 });
+        this.field('category', { boost: 5 });
+        this.field('tags', { boost: 5 });
+        this.field('excerpt', { boost: 3 });
+        this.field('content');
+
+        searchData.forEach(function(doc) {
+            this.add(doc);
+        }, this);
+    });
+
+    // Elementos del DOM
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.getElementById('search-results');
+
+    // Función de búsqueda
+    function performSearch(query) {
+        if (!query || query.length < 2) {
+            searchResults.innerHTML = `
+                <div class="search-info">
+                    <p class="search-placeholder">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <span>Comienza a escribir para buscar artículos...</span>
+                    </p>
+                </div>
+            `;
+            return;
+        }
+
+        try {
+            const results = idx.search(query);
+            
+            if (results.length === 0) {
+                searchResults.innerHTML = `
+                    <div class="search-info">
+                        <p class="no-results">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>No se encontraron resultados para "<strong>${query}</strong>"</span>
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `<div class="search-count">Encontrados ${results.length} resultado${results.length > 1 ? 's' : ''}</div>`;
+            html += '<div class="results-grid">';
+            
+            results.forEach(result => {
+                const post = searchData[parseInt(result.ref) - 1];
+                html += `
+                    <article class="result-card">
+                        <a href="${post.url}" class="result-link">
+                            <div class="result-header">
+                                <span class="result-category">${post.category}</span>
+                                <time class="result-date">${post.date}</time>
+                            </div>
+                            <h3 class="result-title">${highlightText(post.title, query)}</h3>
+                            <p class="result-excerpt">${highlightText(post.excerpt, query)}</p>
+                            ${post.tags && post.tags.length > 0 ? `
+                            <div class="result-tags">
+                                ${post.tags.slice(0, 3).map(tag => `<span class="result-tag">${tag}</span>`).join('')}
+                            </div>
+                            ` : ''}
+                        </a>
+                    </article>
+                `;
+            });
+            
+            html += '</div>';
+            searchResults.innerHTML = html;
+        } catch (e) {
+            console.error('Error en la búsqueda:', e);
+        }
+    }
+
+    // Resaltar texto coincidente
+    function highlightText(text, query) {
+        if (!text) return '';
+        const regex = new RegExp(`(${query})`, 'gi');
+        return text.replace(regex, '<mark>$1</mark>');
+    }
+
+    // Event listener
+    let searchTimeout;
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            performSearch(this.value.trim());
+        }, 300);
+    });
+
+    // Búsqueda inicial si hay parámetro en la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const queryParam = urlParams.get('q');
+    if (queryParam) {
+        searchInput.value = queryParam;
+        performSearch(queryParam);
+    }
+})();
+</script>
+
+<style>
+.search-section {
+    padding: 3rem 0 6rem;
+}
+
+.search-box-large {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+}
+
+.search-icon-large {
+    position: absolute;
+    left: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    color: var(--primary);
+}
+
+.search-input-large {
+    width: 100%;
+    padding: 1.5rem 1.5rem 1.5rem 4rem;
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    border-radius: 1rem;
+    font-size: 1.125rem;
+    color: var(--text-primary);
+    transition: all 0.3s;
+}
+
+.search-input-large:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+}
+
+.search-results {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.search-info {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.search-placeholder,
+.no-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    color: var(--text-muted);
+    font-size: 1.125rem;
+}
+
+.search-placeholder svg,
+.no-results svg {
+    color: var(--text-muted);
+    opacity: 0.5;
+}
+
+.search-count {
+    padding: 1rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+}
+
+.results-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.result-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    transition: all 0.3s;
+}
+
+.result-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.result-link {
+    display: block;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.result-category {
+    padding: 0.25rem 0.75rem;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid var(--primary);
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--primary);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.result-date {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.result-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.result-excerpt {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.result-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.result-tag {
+    padding: 0.25rem 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+mark {
+    background: rgba(0, 212, 255, 0.3);
+    color: var(--primary);
+    padding: 0.1rem 0.2rem;
+    border-radius: 0.2rem;
+}
+
+@media (max-width: 768px) {
+    .search-box-large {
+        margin: 0 1rem 2rem;
+    }
+    
+    .result-title {
+        font-size: 1.25rem;
+    }
+}
+</style>
