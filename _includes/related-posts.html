@@ -153,48 +153,6 @@
     </div>
 </section>
 {% endif %}
-        
-        {% if related_posts.size > 0 %}
-        <div class="related-posts-grid">
-            {% for post in related_posts %}
-            <article class="related-post-card">
-                <a href="{{ post.url | relative_url }}" class="related-post-link">
-                    {% if post.image %}
-                    <div class="related-post-image" style="background-image: url('{{ post.image }}')"></div>
-                    {% else %}
-                    <div class="related-post-image related-post-placeholder">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                    </div>
-                    {% endif %}
-                    
-                    <div class="related-post-content">
-                        <div class="related-post-meta">
-                            <span class="related-post-category">{{ post.category }}</span>
-                            <time class="related-post-date">{{ post.date | date: "%d %b %Y" }}</time>
-                        </div>
-                        <h4 class="related-post-title">{{ post.title }}</h4>
-                        <p class="related-post-excerpt">{{ post.excerpt | strip_html | truncate: 80 }}</p>
-                        
-                        {% if post.tags %}
-                        <div class="related-post-tags">
-                            {% for tag in post.tags limit:2 %}
-                            <span class="related-tag">{{ tag }}</span>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-                    </div>
-                </a>
-            </article>
-            {% endfor %}
-        </div>
-        {% else %}
-        <p class="no-related-posts">No hay artículos relacionados disponibles.</p>
-        {% endif %}
-    </div>
-</section>
-{% endif %}
 
 <style>
 .related-posts {
@@ -329,21 +287,6 @@
     font-weight: 600;
 }
 
-.no-related-posts {
-    text-align: center;
-    color: var(--text-muted);
-    padding: 3rem 2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-}
-
-.no-related-posts svg {
-    opacity: 0.5ap;
-    gap: 0.5rem;
-}
-
 .related-tag {
     padding: 0.25rem 0.5rem;
     background: rgba(131, 56, 236, 0.1);
@@ -355,7 +298,15 @@
 .no-related-posts {
     text-align: center;
     color: var(--text-muted);
-    padding: 2rem;
+    padding: 3rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.no-related-posts svg {
+    opacity: 0.5;
 }
 
 @media (max-width: 768px) {
