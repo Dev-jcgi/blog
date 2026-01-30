@@ -5,7 +5,7 @@ date: 2026-01-25 10:00:00 -0600
 category: Deep Learning
 tags: [transformers, attention, nlp, deep-learning, architecture]
 excerpt: "Guía completa sobre la arquitectura Transformer: self-attention, multi-head attention, positional encoding y cómo GPT y BERT revolucionaron el NLP."
-image: /assets/images/posts/transformers-architecture.jpg
+image: https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800
 reading_time: 12 min
 ---
 

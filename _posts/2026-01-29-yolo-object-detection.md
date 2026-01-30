@@ -5,7 +5,7 @@ date: 2026-01-29 09:00:00 -0600
 category: Computer Vision
 tags: [yolo, object-detection, computer-vision, deep-learning, ultralytics]
 excerpt: "Guía completa de YOLO v8: desde detección básica hasta entrenar modelos custom en tus propias imágenes. Inference en 3ms @ 640px."
-image: /assets/images/posts/yolo-detection.jpg
+image: https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=800
 reading_time: 12 min
 ---
 

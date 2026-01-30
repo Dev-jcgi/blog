@@ -5,7 +5,7 @@ date: 2026-01-28 10:30:00 -0600
 category: MLOps
 tags: [mlops, mlflow, dvc, ci-cd, monitoring, deployment]
 excerpt: "Pipeline completo de MLOps: versionado de datos con DVC, tracking con MLflow, CI/CD con GitHub Actions, monitoring en producción."
-image: /assets/images/posts/mlops-pipeline.jpg
+image: https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=800
 reading_time: 14 min
 ---
 

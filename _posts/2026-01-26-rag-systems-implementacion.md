@@ -5,7 +5,7 @@ date: 2026-01-26 09:30:00 -0600
 category: NLP
 tags: [rag, retrieval, llm, embeddings, vector-database, langchain]
 excerpt: "Guía práctica para implementar sistemas RAG (Retrieval-Augmented Generation): embeddings, vector databases, chunking strategies y optimización de retrieval."
-image: /assets/images/posts/rag-systems.jpg
+image: https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800
 reading_time: 15 min
 ---
 

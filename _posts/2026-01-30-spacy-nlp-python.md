@@ -5,7 +5,7 @@ date: 2026-01-30 10:00:00 -0600
 category: NLP
 tags: [spacy, nlp, ner, tokenization, text-processing, python]
 excerpt: "Guía completa de spaCy: tokenización, NER, dependency parsing, pipelines custom. Procesa 1M+ tokens/segundo en producción."
-image: /assets/images/posts/spacy-nlp.jpg
+image: https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800
 reading_time: 13 min
 ---
 

@@ -5,7 +5,7 @@ date: 2026-01-27 11:00:00 -0600
 category: Machine Learning
 tags: [fine-tuning, lora, peft, llm, parameter-efficient, quantization]
 excerpt: "Aprende a fine-tunear modelos grandes de manera eficiente con LoRA, QLoRA y PEFT. Reduce memory footprint de 40GB a 8GB manteniendo performance."
-image: /assets/images/posts/lora-finetuning.jpg
+image: https://images.unsplash.com/photo-1579547621113-e4bb2a19bdd6?w=800
 reading_time: 13 min
 ---
 
